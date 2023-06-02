@@ -8,6 +8,8 @@ const userRouter = require('./src/routes/User');
 
 // require middlewares
 
+const port = 3000;
+
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/src/views'));
@@ -22,8 +24,8 @@ app.use('/user', userRouter);
 
 const httpServer = http.createServer(app);
 
-httpServer.listen(80, () => {
-    console.log(`Example app listening on 80`);
+httpServer.listen(port, () => {
+    console.log(`Example app listening on ${port}`);
 });
 
 // const httpServer = http.createServer((req, res) => {
