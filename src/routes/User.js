@@ -1,16 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const UserModel = require('../models/User');
+const userController = require('../controllers/User.js');
 
-router.get('/', (req, res) => {
-    UserModel.findAll().then((data) => {
-        console.log(
-            'Tất cả người dùng:',
-            data.map((user) => user.toJSON())
-        );
-    });
-    res.render('admin/layout', { title: 'John', view: 'user/login' });
-});
+router
+    .get('/', userController.login)
+    .post('/getAllUsers', userController.getAllUser)
+    .patch('/update', userController.updateUser);
 
 module.exports = router;
