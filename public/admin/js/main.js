@@ -1,3 +1,5 @@
+import path from 'path';
+console.log(path);
 (function () {
     'use strict';
 
@@ -17,7 +19,6 @@
         const html = $('html');
         if (light) {
             html.removeClass('dark');
-            html.addClass('light');
         } else {
             html.removeClass('light');
             html.addClass('dark');
