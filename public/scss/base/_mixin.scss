@@ -1,0 +1,138 @@
+$screens: (
+    'xs': 480px,
+    'sm': 576px,
+    'md': 768px,
+    'lg': 992px,
+    'xl': 1200px,
+    'xxl': 1400px,
+    'only-xs': 480px - 0.02,
+    'only-sm': 576px - 0.02,
+    'only-md': 768px - 0.02,
+    'only-lg': 992px - 0.02,
+    'only-xl': 1200px - 0.02,
+    'only-xxl': 1400px - 0.02,
+);
+
+@mixin screen($break-point) {
+    @if (str-index($break-point, 'only')) {
+        @media only screen and (max-width: map-get($screens, $break-point)) {
+            @content;
+        }
+    } @else {
+        @media only screen and (min-width: map-get($screens, $break-point)) {
+            @content;
+        }
+    }
+}
+
+@mixin screen-between($from, $to) {
+    @media only screen and (min-width: map-get($screens, $from)) and (max-width: map-get($screens, $to)) {
+        @content;
+    }
+}
+
+@mixin flexbox($justify: center, $align: center, $direct: row) {
+    display: flex;
+    flex-direction: $direct;
+    align-items: $align;
+    justify-content: $justify;
+}
+
+@mixin pseudo($display: block, $pos: absolute, $content: '') {
+    content: $content;
+    display: $display;
+    position: $pos;
+}
+
+@mixin truncate($row) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: $row;
+    -webkit-box-orient: vertical;
+}
+
+@mixin box($width, $height: $width, $display: block) {
+    width: $width;
+    height: $height;
+    display: $display;
+}
+
+@mixin centerbox($margin: auto, $display: block) {
+    display: $display;
+    margin-left: $margin;
+    margin-right: $margin;
+}
+
+@mixin center-abs {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+%saperater-right {
+    @include pseudo;
+    height: 70%;
+    width: 1px;
+    right: -24px;
+    background-color: gray;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+%bridge {
+    @include pseudo;
+    width: 100%;
+    height: 30px;
+}
+
+%bridge-visiable {
+    @include pseudo;
+    border: 10px solid;
+    border-color: transparent transparent var(--color-primary);
+    border-top: none;
+    z-index: -1;
+    top: -10px;
+    right: 18px;
+}
+
+// animation
+
+@keyframes dropdown {
+    0% {
+        transform: scaleY(0);
+    }
+
+    100% {
+        transform: scaleY(1);
+    }
+}
+
+%ani-dropdown {
+    animation: dropdown 0.2s linear;
+    transform-origin: 0 0;
+}
+
+@keyframes zoomin {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+%ani-zoomin {
+    animation: zoomin 0.2s linear;
+    transform-origin: 100% 0;
+}
+
+%oneline {
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

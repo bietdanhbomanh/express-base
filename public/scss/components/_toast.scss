@@ -1,0 +1,87 @@
+#toast {
+    position: fixed;
+    top: 30px;
+    right: 10px;
+    z-index: 999999;
+    @include screen(only-sm) {
+        width: 100%;
+        top: 0px;
+        right: 0;
+        .toast {
+            width: 100%;
+        }
+    }
+}
+
+.toast {
+    border-radius: 12px;
+    overflow: hidden;
+    width: 400px;
+    margin: 8px 0;
+    position: relative;
+    box-shadow: 2px 0 5px rgb(204, 204, 204);
+    transition: all linear 1s !important;
+    @keyframes drop {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    @keyframes fadeout {
+        to {
+            transform: translateX(calc(100% + 20px));
+            opacity: 0;
+        }
+    }
+
+    @keyframes fadefast {
+        to {
+            transform: translateX(calc(100% + 20px));
+            opacity: 0;
+        }
+    }
+
+    &--success &__header {
+        background-color: rgb(var(--color-success) / var(--tw-bg-opacity));
+    }
+
+    &--error &__header {
+        background-color: rgb(var(--color-danger) / var(--tw-bg-opacity));
+    }
+
+    &__header {
+        padding: 8px 16px;
+        @include flexbox(space-between, center);
+        font-weight: 600;
+        color: white;
+    }
+
+    &__time {
+        margin-right: 20px;
+    }
+
+    &__body {
+        padding: 8px 16px;
+        background-color: white;
+    }
+    &__content {
+        @include truncate(2);
+        font-weight: 400;
+        line-height: 2rem;
+        padding: 2px;
+    }
+
+    &__close {
+        position: absolute;
+        top: 4px;
+        right: 10px;
+        color: white;
+        padding: 2px;
+        cursor: pointer;
+        transition: 0s;
+    }
+}
