@@ -1,6 +1,6 @@
 <% function generateMenu(menu, isOpen = false, isFirst = true) { %>
 <ul class="<%= isOpen ? 'side-menu__sub-open' : '' %>">
-    <% menu.forEach((item) => { %> <% if (item.show || !isFirst) { %>
+    <% menu.forEach((item) => { %> <% if (!item.hidden || !isFirst) { %>
     <li>
         <a href="<%= item.javascript ?? item.url %>" class="side-menu <%= item.active ? 'side-menu--active' : '' %>">
             <div class="side-menu__icon">

@@ -11,12 +11,19 @@
         <meta name="author" content="LEFT4CODE" />
         <title><%= page.title ?? 'No title'%></title>
         <!-- BEGIN: CSS Assets-->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.5.2/css/tabulator.min.css"
+            integrity="sha512-HdUIebGeOK7s+At/fOnnbX8vsz6Cl1KTeiRlBiQABTMSqw7kZRCxGiUnuF9lr+1xz5y8pL7jkCR+NNtVVkEqKg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
         <link rel="stylesheet" href="/css/style.css" />
         <link rel="stylesheet" href="/scss/custom.css" />
         <!-- END: CSS Assets-->
     </head>
     <!-- END: Head -->
-    <body class="<%= typeof method !== 'undefined' ? method : '' %>">
+    <body class="<%= typeof mainClass !== 'undefined' ? mainClass : '' %>">
         <%- include(main); %>
 
         <!-- BEGIN: Dark Mode Switcher-->
@@ -55,9 +62,17 @@
             referrerpolicy="no-referrer"
         ></script>
 
+        <!--Drop menu -->
         <script src="https://unpkg.com/@popperjs/core@2"></script>
         <!-- pack icon -->
         <script src="https://unpkg.com/lucide@latest"></script>
+
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.5.2/js/tabulator.min.js"
+            integrity="sha512-oU2NOn7vXb9igwNelYL+57+t+zb3liitNE8/NXg8QFJhBCSvH+dt9+s3H02aM41FUF7WYWx0kPeFV5yIkm1MVA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
         <script src="/js/main.js"></script>
         <!-- END: JS Assets-->
     </body>

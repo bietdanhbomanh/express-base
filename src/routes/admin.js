@@ -1,32 +1,35 @@
 const express = require('express');
 const { login, logout, loginAjax } = require('../controllers/admin/login');
-const { dashboard, post, menus } = require('../controllers/admin');
+const { dashboard, menus } = require('../controllers/admin');
+const { list, categories, listAjax } = require('../controllers/admin/post');
 const authenticate = require('../middlewares/authenticate');
-const authorize = require('../middlewares/authorize');
-const { loadMenu, loadconfig } = require('../middlewares/config');
-const { showError404 } = require('../utils/show');
+const loadConfig = require('../middlewares/loadConfig');
+const loadMenu = require('../middlewares/loadMenu.js');
+
+const { getError404 } = require('../utils/getPage');
 
 const router = express.Router();
 
-const adminMiddlewares = [authenticate, authorize, loadMenu, loadconfig];
+const adminMiddlewares = [authenticate, loadMenu, loadConfig];
 
 // Định tuyến cho router
-router.get('/admin/login', loadconfig, login);
+router.get('/admin/login', loadConfig, login);
 router.post('/admin/login', loginAjax);
-
 router.get('/admin/logout', logout);
 
-router.get('/admin', ...adminMiddlewares, dashboard);
+router.get('/admin', (req, res) => {
+    res.redirect('/admin/dashboard');
+});
 router.get('/admin/dashboard', ...adminMiddlewares, dashboard);
 
-router.get('/admin/post', ...adminMiddlewares, post);
 router.get('/admin/menus', ...adminMiddlewares, menus);
-router.get('/admin/post/categories', ...adminMiddlewares, post);
+router.get('/admin/post/categories', ...adminMiddlewares, categories);
 
-router.get('/admin/post/*', ...adminMiddlewares, post);
+router.get('/admin/post/list', ...adminMiddlewares, list);
+router.get('/admin/post/listajax', ...adminMiddlewares, listAjax);
 
-router.get('/admin*', loadconfig, (req, res) => {
-    showError404(req, res);
+router.get('/admin*', loadConfig, (req, res) => {
+    getError404(req, res);
 });
 
 module.exports = router;

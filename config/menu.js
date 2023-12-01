@@ -5,6 +5,7 @@ module.exports = [
         url: '/admin/dashboard',
         children: [],
         devider: true,
+        hidden: false,
     },
 
     {

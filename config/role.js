@@ -4,15 +4,14 @@ module.exports = {
 
     1: {
         role: 'admin',
-        notPermissions: {
-            '/admin/dashboard': ['GET'],
-            '/admin/menus': ['GET'],
-        },
     },
 
     2: {
         role: 'mod',
-        permissions: {},
+        permissions: {
+            '/admin/dashboard': ['GET'],
+            '/admin/menus': ['GET'],
+        },
     },
 
     3: {

@@ -8,7 +8,9 @@ const session = require('express-session');
 const { connectDB } = require('./config/db');
 const connectRedis = require('connect-redis').default;
 const { createClient } = require('ioredis');
-const serveImage = require('./src/middlewares/image');
+const morgan = require('morgan');
+
+// const serveImage = require('./src/middlewares/image');
 
 const redisClient = createClient();
 redisClient.on('connect', () => {
@@ -17,12 +19,13 @@ redisClient.on('connect', () => {
 
 const redisStore = new connectRedis({ client: redisClient, ttl: 3600 });
 
+connectDB();
+
 const adminRoute = require('./src/routes/admin');
 const port = process.env.PORT;
 
 const app = express();
-connectDB();
-
+app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -41,7 +44,7 @@ app.use(
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/src/views'));
 
-app.use('/images', serveImage);
+// app.use('/images', serveImage);
 
 app.use(express.static(__dirname + '/public'));
 app.use(adminRoute);
