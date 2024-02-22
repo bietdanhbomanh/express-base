@@ -15691,7 +15691,8 @@ html body{
     --tw-text-opacity: 1;
     color: rgb(var(--color-slate-200) / var(--tw-text-opacity));
 }
-.tom-select .ts-input {
+.tom-select .ts-control {
+    padding-right: 35px !important;
     min-height: 40px;
     padding: 7.5px 32px 7.5px 12px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgb(74 85 104)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-chevron-down'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
@@ -15706,16 +15707,19 @@ html body{
     --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   }
-.tom-select .ts-input .item {
+.ts-wrapper {
+    outline:none !important;
+  }
+.tom-select .ts-control .item {
       line-height: 22px;
     }
-.tom-select .ts-input.dropdown-active {
+.tom-select .ts-control.dropdown-active {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14.828' height='8.414' viewBox='0 0 14.828 8.414'%3E%3Cpath id='chevron' d='M6,9l6,6,6-6' transform='translate(19.414 16) rotate(180)' fill='none' stroke='%234a5568' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'/%3E%3C/svg%3E%0A") !important;
       background-size: 11px !important;
       background-position: center right 0.8rem !important;
       background-repeat: no-repeat !important;
     }
-.tom-select .ts-input input {
+.tom-select .ts-control input {
       height: 23px;
       font-size: 0.875rem;
       line-height: 1.25rem;
@@ -15726,7 +15730,7 @@ html body{
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
 }
-.tom-select.multi .ts-input > div{
+.ts-wrapper.multi .ts-control > div{
     margin-top: 0.125rem;
     margin-bottom: 0.125rem;
     margin-right: 0.25rem;
@@ -15738,11 +15742,11 @@ html body{
     padding-top: 0px;
     padding-bottom: 0px;
 }
-.tom-select.multi .ts-input > div.active{
+.ts-wrapper.multi .ts-control > div.active{
     --tw-bg-opacity: 1;
     background-color: rgb(var(--color-slate-300) / var(--tw-bg-opacity));
 }
-.tom-select.multi .ts-input > div.active .remove{
+.ts-wrapper.multi .ts-control > div.active .remove{
     --tw-border-opacity: 1;
     border-color: rgb(var(--color-slate-400) / var(--tw-border-opacity));
 }
@@ -15825,7 +15829,7 @@ html body{
     color: rgb(var(--color-slate-400) / var(--tw-text-opacity));
     opacity: 1;
 }
-.dark .tom-select .ts-input {
+.dark .tom-select .ts-control {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgb(255 255 255)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-chevron-down'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
       border-color: transparent;
       --tw-bg-opacity: 1;
@@ -15833,7 +15837,7 @@ html body{
       --tw-text-opacity: 1;
       color: rgb(var(--color-slate-300) / var(--tw-text-opacity));
     }
-.dark .tom-select .ts-input.dropdown-active{
+.dark .tom-select .ts-control.dropdown-active{
     border-color: transparent;
     --tw-bg-opacity: 1;
     background-color: rgb(var(--color-darkmode-800) / var(--tw-bg-opacity));
@@ -15841,11 +15845,11 @@ html body{
     color: rgb(var(--color-slate-300) / var(--tw-text-opacity));
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14.828' height='8.414' viewBox='0 0 14.828 8.414'%3E%3Cpath id='chevron' d='M6,9l6,6,6-6' transform='translate(19.414 16) rotate(180)' fill='none' stroke='rgb(255 255 255)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'/%3E%3C/svg%3E%0A") !important;
 }
-.dark .tom-select .ts-input.dropdown-active:before{
+.dark .tom-select .ts-control.dropdown-active:before{
     --tw-bg-opacity: 1;
     background-color: rgb(var(--color-darkmode-800) / var(--tw-bg-opacity));
 }
-.dark .tom-select.multi .ts-input > div{
+.dark .ts-wrapper.multi .ts-control > div{
     border-width: 1px;
     --tw-border-opacity: 1;
     border-color: rgb(var(--color-darkmode-400) / var(--tw-border-opacity));
@@ -15854,10 +15858,10 @@ html body{
     --tw-text-opacity: 1;
     color: rgb(var(--color-slate-300) / var(--tw-text-opacity));
 }
-.dark .tom-select.multi .ts-input > div.active{
+.dark .ts-wrapper.multi .ts-control > div.active{
     background-color: rgb(var(--color-darkmode-400) / 0.8);
 }
-.dark .tom-select.multi .ts-input > div .remove{
+.dark .ts-wrapper.multi .ts-control > div .remove{
     --tw-border-opacity: 1;
     border-color: rgb(var(--color-darkmode-400) / var(--tw-border-opacity));
 }

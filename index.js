@@ -5,10 +5,10 @@ const http = require('http');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const methodOverride = require('method-override');
 const { connectDB } = require('./config/db');
 const connectRedis = require('connect-redis').default;
 const { createClient } = require('ioredis');
-const morgan = require('morgan');
 
 // const serveImage = require('./src/middlewares/image');
 
@@ -25,10 +25,11 @@ const adminRoute = require('./src/routes/admin');
 const port = process.env.PORT;
 
 const app = express();
-app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use(methodOverride('_method'));
 
 app.use(
     session({
@@ -43,8 +44,6 @@ app.use(
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/src/views'));
-
-// app.use('/images', serveImage);
 
 app.use(express.static(__dirname + '/public'));
 app.use(adminRoute);

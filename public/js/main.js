@@ -1,6 +1,191 @@
 const dom = $;
 const main = {
     run: {
+        tippy: function () {
+            $('.tooltip').each(function () {
+                let options = {
+                    content: $(this).attr('title'),
+                };
+
+                if ($(this).data('trigger') !== undefined) {
+                    options.trigger = $(this).data('trigger');
+                }
+
+                if ($(this).data('placement') !== undefined) {
+                    options.placement = $(this).data('placement');
+                }
+
+                if ($(this).data('theme') !== undefined) {
+                    options.theme = $(this).data('theme');
+                }
+
+                if ($(this).data('tooltip-content') !== undefined) {
+                    options.content = $($(this).data('tooltip-content'))[0];
+                }
+
+                $(this).removeAttr('title');
+
+                tippy(this, {
+                    arrow: tippy.roundArrow,
+                    animation: 'shift-away',
+                    ...options,
+                });
+            });
+        },
+        tabContent: function () {
+            dom('body').on('click', "[role='tab']", function () {
+                show(this);
+            });
+
+            function show(el) {
+                dom(el)
+                    .closest("[role='tablist']")
+                    .find("[role='tab']")
+                    .each(function () {
+                        // Trigger "hide.tw.tab" callback function
+                        if (dom(this).hasClass('active') && this !== el) {
+                            const event = new Event('hide.tw.tab');
+                            dom(this)[0].dispatchEvent(event);
+                        }
+
+                        // Trigger "show.tw.tab" callback function
+                        if (!dom(this).hasClass('active') && this === el) {
+                            const event = new Event('show.tw.tab');
+                            dom(this)[0].dispatchEvent(event);
+                        }
+                    });
+
+                // Set active tab nav
+                dom(el)
+                    .closest("[role='tablist']")
+                    .find("[role='tab']")
+                    .removeClass('active')
+                    .attr('aria-selected', false);
+                dom(el).addClass('active').attr('aria-selected', true);
+
+                // Set active tab content
+                let elementId = dom(el).attr('data-tw-target');
+                let tabContentWidth = dom(elementId).closest('.tab-content').width();
+                dom(elementId).closest('.tab-content').children('.tab-pane').removeAttr('style').removeClass('active');
+                dom(elementId)
+                    .css('width', tabContentWidth + 'px')
+                    .addClass('active');
+            }
+
+            // Create instance
+            function createInstance(el) {
+                return {
+                    show() {
+                        show(el);
+                    },
+                };
+            }
+
+            dom("[role='tab']").each(function () {
+                this['__tab'] = createInstance(this);
+            });
+        },
+        tomSelect: function () {
+            $('.tom-select').each(function () {
+                let options = {
+                    plugins: {
+                        dropdown_input: {},
+                    },
+                };
+
+                if ($(this).data('placeholder')) {
+                    options.placeholder = $(this).data('placeholder');
+                }
+
+                if ($(this).attr('create')) {
+                    options.create = $(this).attr('create');
+                }
+
+                if ($(this).attr('multiple') !== undefined) {
+                    options = {
+                        ...options,
+                        plugins: {
+                            ...options.plugins,
+                            remove_button: {
+                                title: 'Remove this item',
+                            },
+                        },
+                        persist: false,
+                        // create: true,
+                        onDelete: function (values) {
+                            return confirm(
+                                values.length > 1
+                                    ? 'Are you sure you want to remove these ' + values.length + ' items?'
+                                    : 'Are you sure you want to remove "' + values[0] + '"?'
+                            );
+                        },
+                    };
+                }
+
+                if ($(this).data('header')) {
+                    options = {
+                        ...options,
+                        plugins: {
+                            ...options.plugins,
+                            dropdown_header: {
+                                title: $(this).data('header'),
+                            },
+                        },
+                    };
+                }
+
+                new TomSelect(this, options);
+            });
+        },
+        ckeditor: function () {
+            $('.editor').each(function () {
+                const el = this;
+                ClassicEditor.create(el).catch((error) => {
+                    console.error(error);
+                });
+            });
+        },
+
+        datepicker: function () {
+            $('.datepicker').each(function () {
+                let options = {
+                    autoApply: false,
+                    singleMode: false,
+                    numberOfColumns: 2,
+                    numberOfMonths: 2,
+                    showWeekNumbers: true,
+                    format: 'D MMM, YYYY',
+                    dropdowns: {
+                        minYear: 1990,
+                        maxYear: null,
+                        months: true,
+                        years: true,
+                    },
+                };
+
+                if ($(this).data('single-mode')) {
+                    options.singleMode = true;
+                    options.numberOfColumns = 1;
+                    options.numberOfMonths = 1;
+                }
+
+                if ($(this).data('format')) {
+                    options.format = $(this).data('format');
+                }
+
+                if (!$(this).val()) {
+                    let date = dayjs().format(options.format);
+                    date += !options.singleMode ? ' - ' + dayjs().add(1, 'month').format(options.format) : '';
+                    $(this).val(date);
+                }
+
+                new Litepicker({
+                    element: this,
+                    ...options,
+                });
+            });
+        },
+
         themeSwitcher: function () {
             const html = $('html');
             $('.dark-mode-switcher').on('click', function () {
@@ -1075,6 +1260,63 @@ const main = {
                 });
             }
         },
+        fileManager: function () {
+            const allCheckbox = $('input[type="checkbox"][name="files"]');
+
+            $('#selectAll').click(function () {
+                allCheckbox.prop('checked', true).trigger('change');
+            });
+            $('#removeSelectAll').click(function () {
+                allCheckbox.prop('checked', false).trigger('change');
+            });
+
+            allCheckbox.change(function () {
+                let anyChecked = false;
+                allCheckbox.each(function () {
+                    if ($(this).is(':checked')) {
+                        anyChecked = true;
+                        return false; // Thoát khỏi vòng lặp nếu có checkbox được chọn
+                    }
+                });
+                if (anyChecked) {
+                    $('#delete-selected').removeClass('hidden');
+                } else {
+                    $('#delete-selected').addClass('hidden');
+                }
+            });
+
+            $('#createFolder').click(function () {
+                const name = $('input[name="folder"').val();
+                if (name) {
+                    main.wait.toast('Đang tạo folder', 'success');
+                    const data = {
+                        dirName: name,
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '?_method=PUT',
+                        data,
+                        success: function (response) {
+                            // Hiển thị thông báo thành công
+                            if (response.status == 'success') {
+                                main.wait.toast('Tạo folder thành công', 'success');
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                main.wait.toast('Vui lòng kiểm tra lại', 'error');
+                            }
+                        },
+                        error: function (error) {
+                            // Hiển thị thông báo lỗi
+                            main.wait.toast('Lỗi hệ thống mạng', 'error');
+                        },
+                    });
+                } else {
+                    main.wait.toast('Vui lòng nhập tên', 'error');
+                }
+            });
+        },
     },
     wait: {
         toast: function toast(title = 'Success', type = 'error', content = '', duration = 10, html = '') {
@@ -1133,6 +1375,26 @@ const main = {
                     }
                 };
             }
+        },
+        confirmSubmit: function () {
+            if (confirm('Are you sure you want to submit the form?')) {
+                return true; // Tiếp tục gửi biểu mẫu
+            } else {
+                return false; // Hủy gửi biểu mẫu
+            }
+        },
+        uploadFiles: function () {
+            const realButton = $('#fileInput');
+            realButton.click();
+            realButton.change(function () {
+                // const selectedFiles = fileInput.files;
+                // const fileNames = Array.from(selectedFiles)
+                //     .map((file) => file.name)
+                //     .join(', ');
+                // console.log(`Đã chọn file: ${fileNames}`);
+
+                $('#fileUpload').submit();
+            });
         },
     },
     init() {

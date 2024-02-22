@@ -21,7 +21,7 @@
 //         }
 //     });
 
-const { menus } = require('../controllers/admin');
+const { menus } = require('../controllers/admin/dashboard');
 
 //     const url = req.path;
 

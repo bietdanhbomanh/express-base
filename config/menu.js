@@ -14,6 +14,13 @@ module.exports = [
         url: '/admin/menus',
         children: [],
     },
+
+    {
+        icon: 'hard-drive',
+        name: 'File Manager',
+        url: '/admin/file-manager',
+        children: [],
+    },
     {
         icon: 'file-text',
         name: 'Post',
