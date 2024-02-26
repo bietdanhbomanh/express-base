@@ -902,7 +902,12 @@ const main = {
                 });
             });
         },
-        login: function () {
+        handleForm: function () {
+            $('form.noEnterSubmit').on('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+                }
+            });
             $('form.js-handle').submit(function (event) {
                 event.preventDefault(); // Prevent the default form submission
                 if ($(this).valid()) {
@@ -1268,6 +1273,27 @@ const main = {
             });
             $('#removeSelectAll').click(function () {
                 allCheckbox.prop('checked', false).trigger('change');
+            });
+
+            $('.deleteSingle').click(function (e) {
+                let deleting = false;
+                if (deleting) return;
+                const file = $(e.target).closest('.file');
+                const data = file.find('.truncate').html();
+                $.ajax({
+                    url: '?_method=DELETE',
+                    type: 'post',
+                    data: {
+                        files: data,
+                    },
+                    beforeSend: function () {
+                        deleting = true;
+                    },
+                    success: function () {
+                        deleting = false;
+                        file.parent().remove();
+                    },
+                });
             });
 
             allCheckbox.change(function () {
