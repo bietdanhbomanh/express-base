@@ -1,32 +1,7 @@
-<% function generateMenuMobile(menu, isOpen = false, isFirst = true) { %>
-<ul class="<%= isOpen ? 'menu__sub-open' : '' %> <%= isFirst ? 'scrollable__content py-2' : '' %>">
-    <% menu.forEach((item) => { %> <% if (!item.hidden || !isFirst) { %>
-    <li>
-        <a href="<%= item.javascript ?? item.url %>" class="menu <%= item.active ? 'menu--active' : '' %>">
-            <div class="menu__icon">
-                <i data-lucide="<%= item.icon === 'default' ? 'activity' : item.icon %>"></i>
-            </div>
-            <div class="menu__title">
-                <%= item.name %> <% if (item.children.length) { %>
-                <div class="menu__sub-icon <%= item.active ? 'transform rotate-180' : '' %>">
-                    <i data-lucide="chevron-down"></i>
-                </div>
-                <% } %>
-            </div>
-        </a>
-        <% if (item.children.length) { %> <% generateMenuMobile(item.children, item.active, false); %> <% } %>
-    </li>
-    <% if (item.devider) { %>
-    <li class="side-nav__devider my-4"></li>
-    <% }}}); %>
-</ul>
-
-<% } %>
-
 <div class="mobile-menu md:hidden">
     <div class="mobile-menu-bar">
         <a href="" class="flex mr-auto">
-            <img alt="Midone - HTML Admin Template" class="w-6" src="/images/logo.svg" />
+            <img alt="Midone - HTML Admin Template" class="w-6" src="/admin/images/logo.svg" />
         </a>
         <a href="javascript:;" class="mobile-menu-toggler">
             <i data-lucide="bar-chart-2" class="w-8 h-8 text-white transform -rotate-90"></i>
@@ -36,6 +11,6 @@
         <a href="javascript:;" class="mobile-menu-toggler">
             <i data-lucide="x-circle" class="w-8 h-8 text-white transform -rotate-90"></i>
         </a>
-        <% generateMenuMobile(menu); %>
+        <%- helpers.generateMenuMobile(menu); %>
     </div>
 </div>

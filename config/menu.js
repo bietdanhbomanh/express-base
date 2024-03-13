@@ -28,6 +28,12 @@ module.exports = [
         javascript: 'javascript:;',
         children: [
             {
+                icon: 'plus',
+                name: 'Add new',
+                url: '/admin/post/add',
+                children: [],
+            },
+            {
                 icon: 'default',
                 name: 'List',
                 url: '/admin/post/list',

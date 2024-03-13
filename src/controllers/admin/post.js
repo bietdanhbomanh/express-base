@@ -1,12 +1,20 @@
 const categoryModel = require('../../models/categoryModel');
+const postModel = require('../../models/postModel');
 
 module.exports = {
     add: function (req, res) {
-        res.locals.page = {
-            shortTitle: 'Add New',
-            title: 'Add New CMS ' + process.env.WEB,
-        };
-        res.render('admin/layout', { main: 'post/add' });
+        switch (req.method) {
+            case 'POST':
+                console.log(req.body);
+                break;
+
+            default:
+                res.locals.page = {
+                    shortTitle: 'Add New',
+                    title: 'Add New CMS ' + process.env.WEB,
+                };
+                res.render('admin/layout', { main: 'post/add' });
+        }
     },
     list: function (req, res) {
         res.locals.page = {

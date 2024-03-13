@@ -1,34 +1,9 @@
-<% function generateMenu(menu, isOpen = false, isFirst = true) { %>
-<ul class="<%= isOpen ? 'side-menu__sub-open' : '' %>">
-    <% menu.forEach((item) => { %> <% if (!item.hidden || !isFirst) { %>
-    <li>
-        <a href="<%= item.javascript ?? item.url %>" class="side-menu <%= item.active ? 'side-menu--active' : '' %>">
-            <div class="side-menu__icon">
-                <i data-lucide="<%= item.icon === 'default' ? 'activity' : item.icon %>"></i>
-            </div>
-            <div class="side-menu__title">
-                <%= item.name %> <% if (item.children.length) { %>
-                <div class="side-menu__sub-icon <%= item.active ? 'transform rotate-180' : '' %>">
-                    <i data-lucide="chevron-down"></i>
-                </div>
-                <% } %>
-            </div>
-        </a>
-        <% if (item.children.length) { %> <% generateMenu(item.children, item.active, false); %> <% } %>
-    </li>
-    <% if (item.devider) { %>
-    <li class="side-nav__devider my-4"></li>
-    <% }}}); %>
-</ul>
-
-<% } %>
-
 <nav class="side-nav">
     <a href="" class="intro-x flex items-center pl-5 pt-4">
-        <img alt="Midone - HTML Admin Template" class="w-6" src="/images/logo.svg" />
+        <img alt="Midone - HTML Admin Template" class="w-6" src="/admin/images/logo.svg" />
         <span class="hidden xl:block text-white text-lg ml-3"> Rubick </span>
     </a>
     <div class="side-nav__devider my-6"></div>
 
-    <% generateMenu(menu); %>
+    <%- helpers.generateMenu(menu); %>
 </nav>

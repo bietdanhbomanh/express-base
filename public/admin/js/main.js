@@ -144,6 +144,12 @@ const main = {
                     console.error(error);
                 });
             });
+            $('.editor-notool').each(function () {
+                const el = this;
+                ClassicEditor.create(el, { toolbar: [], autoParagraph: false }).catch((error) => {
+                    console.error(error);
+                });
+            });
         },
 
         datepicker: function () {
@@ -902,27 +908,45 @@ const main = {
                 });
             });
         },
-        handleForm: function () {
+        jsSubmit: function () {
             $('form.noEnterSubmit').on('keydown', function (event) {
                 if (event.key === 'Enter') {
                     event.preventDefault(); // Ngăn chặn hành vi mặc định của form
                 }
             });
-            $('form.js-handle').submit(function (event) {
+            $('form.jsSubmit').submit(function (event) {
                 event.preventDefault(); // Prevent the default form submission
                 if ($(this).valid()) {
                     const button = $(this).find('[type="submit"]');
                     button.prop('disabled', 'true');
                     icon = button.find('.hidden').removeClass('hidden');
 
-                    $.ajax({
+                    let formData = {
                         url: $(this).attr('action'), // The form's action attribute
-                        type: $(this).attr('method'), // The form's method attribute
-                        data: $(this).serialize(), // Serialize the form data
+                        method: $(this).attr('method'), // The form's method attribute
+                    };
+
+                    if ($(this).hasClass('uploadFile')) {
+                        formData = {
+                            ...formData,
+                            data: new FormData(this), // Serialize the form data
+                            processData: false,
+                            contentType: false,
+                        };
+                    } else {
+                        formData = {
+                            ...formData,
+                            data: $(this).serialize(),
+                        };
+                    }
+
+                    $.ajax({
+                        ...formData,
                         success: function (response) {
+                            console.log(response);
                             button.removeAttr('disabled');
                             icon.addClass('hidden');
-                            if (response.status === 'success') {
+                            if (response.status) {
                                 location.reload();
                             } else {
                                 main.wait.toast(response.message, 'error');
@@ -934,9 +958,7 @@ const main = {
                                             .addClass('has-error');
 
                                         const errorMessage = $(
-                                            '<div id="username-error" class="error text-danger mt-2">' +
-                                                response.form[element] +
-                                                '</div>'
+                                            '<div class="error text-danger mt-2">' + response.form[element] + '</div>'
                                         );
 
                                         parrent.append(errorMessage);
@@ -1265,84 +1287,6 @@ const main = {
                 });
             }
         },
-        fileManager: function () {
-            const allCheckbox = $('input[type="checkbox"][name="files"]');
-
-            $('#selectAll').click(function () {
-                allCheckbox.prop('checked', true).trigger('change');
-            });
-            $('#removeSelectAll').click(function () {
-                allCheckbox.prop('checked', false).trigger('change');
-            });
-
-            $('.deleteSingle').click(function (e) {
-                let deleting = false;
-                if (deleting) return;
-                const file = $(e.target).closest('.file');
-                const data = file.find('.truncate').html();
-                $.ajax({
-                    url: '?_method=DELETE',
-                    type: 'post',
-                    data: {
-                        files: data,
-                    },
-                    beforeSend: function () {
-                        deleting = true;
-                    },
-                    success: function () {
-                        deleting = false;
-                        file.parent().remove();
-                    },
-                });
-            });
-
-            allCheckbox.change(function () {
-                let anyChecked = false;
-                allCheckbox.each(function () {
-                    if ($(this).is(':checked')) {
-                        anyChecked = true;
-                        return false; // Thoát khỏi vòng lặp nếu có checkbox được chọn
-                    }
-                });
-                if (anyChecked) {
-                    $('#delete-selected').removeClass('hidden');
-                } else {
-                    $('#delete-selected').addClass('hidden');
-                }
-            });
-
-            $('#createFolder').click(function () {
-                const name = $('input[name="folder"').val();
-                if (name) {
-                    main.wait.toast('Đang tạo folder', 'success');
-                    const data = {
-                        dirName: name,
-                    };
-                    $.ajax({
-                        type: 'POST',
-                        url: '?_method=PUT',
-                        data,
-                        success: function (response) {
-                            // Hiển thị thông báo thành công
-                            if (response.status == 'success') {
-                                main.wait.toast('Tạo folder thành công', 'success');
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 2000);
-                            } else {
-                                main.wait.toast('Vui lòng kiểm tra lại', 'error');
-                            }
-                        },
-                        error: function (error) {
-                            // Hiển thị thông báo lỗi
-                            main.wait.toast('Lỗi hệ thống mạng', 'error');
-                        },
-                    });
-                } else {
-                    main.wait.toast('Vui lòng nhập tên', 'error');
-                }
-            });
-        },
     },
     wait: {
         toast: function toast(title = 'Success', type = 'error', content = '', duration = 10, html = '') {
@@ -1403,33 +1347,20 @@ const main = {
             }
         },
         confirmSubmit: function () {
-            if (confirm('Are you sure you want to submit the form?')) {
+            if (confirm('Bạn có chắc chắn với hành động này không?')) {
                 return true; // Tiếp tục gửi biểu mẫu
             } else {
                 return false; // Hủy gửi biểu mẫu
             }
         },
-        uploadFiles: function () {
-            const realButton = $('#fileInput');
-            realButton.click();
-            realButton.change(function () {
-                // const selectedFiles = fileInput.files;
-                // const fileNames = Array.from(selectedFiles)
-                //     .map((file) => file.name)
-                //     .join(', ');
-                // console.log(`Đã chọn file: ${fileNames}`);
-
-                $('#fileUpload').submit();
-            });
-        },
     },
     init() {
         for (let key in this.run) {
-            if (typeof this.run[key] === 'function') {
-                this.run[key]();
-            }
+            this.run[key]();
         }
     },
 };
 
-main.init();
+$(document).ready(function () {
+    main.init();
+});

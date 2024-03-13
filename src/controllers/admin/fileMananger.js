@@ -1,176 +1,136 @@
 const multer = require('multer');
 const fs = require('fs');
-const url = require('url');
 
 const path = require('path');
 const paginate = require('../../utils/pagination');
-const { getError404, getRefresh } = require('../../utils/getPage');
+const { getError404 } = require('../../utils/getPage');
 
-const basePath = 'uploads/';
+const basePath = 'public/uploads/';
 
 const upload = multer({ dest: basePath });
-module.exports = {
-    fileManager: function (req, res) {
-        const parsedUrl = url.parse(req.url, true);
-        const paths = parsedUrl.pathname.split('/');
+module.exports = function (req, res) {
+    const regex = /^\/admin\/file-manager(.*)/;
 
-        if (paths[2] !== 'file-manager') {
-            return getError404(req, res);
-        }
+    let pathChild = decodeURIComponent(req.url.replace(regex, '$1'));
+    pathChild = `${pathChild.split('?')[0]}`;
 
-        let pathChild = parsedUrl.pathname.replace('/admin/file-manager/', '');
-        pathChild = pathChild === parsedUrl.pathname ? '' : pathChild;
-
-        const itemsPerPage = 12; // Số lượng item trên mỗi trang
-        const currentPage = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
-
-        fs.readdir(basePath + `${decodeURIComponent(pathChild)}`, { withFileTypes: true }, (err, files) => {
-            if (err) {
-                return getError404(req, res);
-            }
-
-            const fileItems = [];
-            const dirItems = [];
-
-            files.forEach((item) => {
-                const itemName = item.name;
-                const one = { name: item.name };
-
-                if (item.isFile()) {
-                    const filePath = parsedUrl.pathname.replace('file-manager', 'file-view') + '/' + itemName;
-                    one.path = filePath;
-                    one.isFile = true;
-                    one.extension = path.extname(itemName);
-
-                    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
-                    if (imageExtensions.includes(one.extension.toLowerCase())) {
-                        one.isImage = true;
-                    } else {
-                        one.isImage = false;
-                    }
-
-                    fileItems.push(one);
-                } else if (item.isDirectory()) {
-                    const dirPath = parsedUrl.pathname + '/' + itemName;
-                    one.path = dirPath;
-                    one.isFile = false;
-                    dirItems.push(one);
-                }
-            });
-
-            const all = [...dirItems, ...fileItems];
-
-            const pagination = paginate(currentPage, itemsPerPage, all.length, all);
-
-            res.locals.urlBack = req.url.split('/').slice(0, -1).join('/');
-            res.locals.pathChild = pathChild;
-            res.locals.pagination = pagination;
-            res.locals.page = {
-                shortTitle: 'File Manager',
-                title: 'File Manager CMS ' + process.env.WEB,
-            };
-
-            res.render('admin/layout', { main: 'pages/fileManager' });
-        });
-    },
-    fileUpload: function (req, res) {
-        const parsedUrl = url.parse(req.url, true);
-        let pathChild = parsedUrl.pathname.replace('/admin/file-manager/', '');
-        pathChild = pathChild === parsedUrl.pathname ? '' : pathChild;
-
-        if (req.body.dirName) {
-            const targetPath = path.join(basePath, `${decodeURIComponent(pathChild)}`, `${req.body.dirName}`);
-            fs.mkdir(targetPath, (err) => {
-                if (err) {
-                    res.json({ status: 'error' });
-                } else {
-                    res.json({ status: 'success' });
-                }
-            });
-        } else {
-            upload.array('files[]')(req, res, (err) => {
-                if (err) {
-                    return getError404;
-                }
-                const files = req.files;
-                files.forEach((file) => {
-                    const targetPath = path.join(basePath, `${decodeURIComponent(pathChild)}`, `${file.originalname}`);
-                    fs.rename(file.path, targetPath, (err) => {
-                        if (err) {
-                            return getError404;
-                        }
-                    });
-                });
-                getRefresh(req, res);
-            });
-        }
-    },
-    fileDelete: function (req, res) {
-        if (!req.body.files) {
-            getRefresh(req, res);
-        }
-
-        const parsedUrl = url.parse(req.url, true);
-
-        let pathChild = parsedUrl.pathname.replace('/admin/file-manager/', '');
-        pathChild = pathChild === parsedUrl.pathname ? '' : pathChild;
-
-        if (typeof req.body.files === 'string') {
-            const pathTarget = path.join(
-                basePath,
-                `${decodeURIComponent(pathChild)}`,
-                `${decodeURIComponent(req.body.files)}`
-            );
-            if (fs.existsSync(pathTarget)) {
-                if (fs.lstatSync(pathTarget).isDirectory()) {
-                    fs.rmSync(pathTarget, { recursive: true });
-                } else {
-                    fs.unlinkSync(pathTarget);
-                }
-                getRefresh(req, res);
-            } else {
-                getError404(req, res);
-            }
-        } else {
-            req.body.files.forEach((file) => {
-                const pathTarget = path.join(
-                    basePath,
-                    `${decodeURIComponent(pathChild)}`,
-                    `${decodeURIComponent(file)}`
-                );
+    switch (req.method) {
+        case 'DELETE':
+            if (typeof req.body.files === 'string') {
+                const pathTarget = path.join(basePath, pathChild, `${decodeURIComponent(req.body.files)}`);
                 if (fs.existsSync(pathTarget)) {
                     if (fs.lstatSync(pathTarget).isDirectory()) {
                         fs.rmSync(pathTarget, { recursive: true });
                     } else {
                         fs.unlinkSync(pathTarget);
                     }
-                } else {
-                    getError404(req, res);
                 }
-            });
-            getRefresh(req, res);
-        }
-    },
+                res.json({ status: 1 });
+            } else {
+                req.body.files.forEach((file) => {
+                    const pathTarget = path.join(basePath, pathChild, `${decodeURIComponent(file)}`);
 
-    viewFile: function (req, res) {
-        const parsedUrl = url.parse(req.url, true);
-        const paths = parsedUrl.pathname.split('/');
+                    if (fs.existsSync(pathTarget)) {
+                        if (fs.lstatSync(pathTarget).isDirectory()) {
+                            fs.rmSync(pathTarget, { recursive: true });
+                        } else {
+                            fs.unlinkSync(pathTarget);
+                        }
+                    }
+                });
+                res.json({ status: 1 });
+            }
+            break;
 
-        if (paths[2] !== 'file-view' || paths[3] === '' || paths.length <= 3) {
-            return getError404(req, res);
-        }
+        case 'PUT':
+            if (req.body.action == 'mkdir') {
+                const targetPath = path.join(basePath, pathChild, `${req.body.dirName}`);
+                fs.mkdir(targetPath, (err) => {
+                    if (err) {
+                        res.json({ status: 0 });
+                    } else {
+                        res.json({ status: 1 });
+                    }
+                });
+            } else {
+                upload.array('files[]')(req, res, (err) => {
+                    if (err) {
+                        res.json({ status: 0 });
+                    }
+                    const files = req.files;
+                    files.forEach((file) => {
+                        if (/^\.*\./.test(file.originalname)) {
+                            file.originalname = file.originalname.replace(/^\.*\./, '');
+                        }
+                        const targetPath = path.join(basePath, pathChild, `${decodeURIComponent(file.originalname)}`);
 
-        let pathChild = parsedUrl.pathname.replace('/admin/file-view/', '');
+                        fs.renameSync(file.path, targetPath, (err) => {
+                            if (err) {
+                                res.json({ status: 0 });
+                            }
+                        });
+                    });
+                    res.json({ status: 1 });
+                });
+            }
+            break;
 
-        pathChild = pathChild === parsedUrl.pathname ? '' : pathChild;
-
-        let filePath = `${decodeURIComponent(basePath + pathChild.replace(/^\./, ''))}`;
-        fs.access(`${filePath}`, fs.constants.F_OK, (err) => {
-            if (err) {
+        default:
+            if (!regex.test(req.url)) {
                 return getError404(req, res);
             }
 
-            res.sendFile(path.resolve(filePath));
-        });
-    },
+            const itemsPerPage = 18; // Số lượng item trên mỗi trang
+            const currentPage = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
+
+            fs.readdir(basePath + pathChild, { withFileTypes: true }, (err, files) => {
+                if (err) {
+                    return getError404(req, res);
+                }
+
+                const fileItems = [];
+                const dirItems = [];
+
+                files.forEach((item) => {
+                    const itemName = item.name;
+                    const oneItem = { name: item.name };
+
+                    if (item.isFile()) {
+                        const filePath = path.join('/uploads', pathChild, itemName);
+                        oneItem.path = filePath;
+                        oneItem.isFile = true;
+                        oneItem.extension = path.extname(itemName);
+
+                        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+                        if (imageExtensions.includes(oneItem.extension.toLowerCase())) {
+                            oneItem.isImage = true;
+                        } else {
+                            oneItem.isImage = false;
+                        }
+
+                        fileItems.push(oneItem);
+                    } else if (item.isDirectory()) {
+                        const dirPath = path.join(req.url, itemName);
+                        oneItem.path = dirPath;
+                        oneItem.isFile = false;
+                        dirItems.push(oneItem);
+                    }
+                });
+
+                const all = [...dirItems, ...fileItems];
+
+                const pagination = paginate(currentPage, itemsPerPage, all.length, all);
+
+                res.locals.urlBack = req.url.split('/').slice(0, -1).join('/');
+                res.locals.pathChild = pathChild;
+                res.locals.pagination = pagination;
+                res.locals.page = {
+                    shortTitle: 'File Manager',
+                    title: 'File Manager CMS ' + process.env.WEB,
+                };
+
+                res.render('admin/layout', { main: 'pages/fileManager' });
+            });
+            break;
+    }
 };

@@ -5,11 +5,9 @@ const http = require('http');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const methodOverride = require('method-override');
 const { connectDB } = require('./config/db');
 const connectRedis = require('connect-redis').default;
 const { createClient } = require('ioredis');
-
 // const serveImage = require('./src/middlewares/image');
 
 const redisClient = createClient();
@@ -26,10 +24,8 @@ const port = process.env.PORT;
 
 const app = express();
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-app.use(methodOverride('_method'));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
     session({

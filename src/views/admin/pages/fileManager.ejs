@@ -57,14 +57,17 @@
                 <!-- END: File Manager Menu -->
             </div>
 
-            <form hidden action="?_method=PUT" method="post" enctype="multipart/form-data" id="fileUpload">
+            <form
+                hidden
+                action=""
+                method="PUT"
+                enctype="multipart/form-data"
+                class="uploadFile jsSubmit"
+                id="fileUpload"
+            >
                 <input type="file" name="files[]" id="fileInput" multiple />
             </form>
-            <form
-                action="?_method=DELETE"
-                method="post"
-                class="noEnterSubmit col-span-12 lg:col-span-9 2xl:col-span-10"
-            >
+            <form action="" method="DELETE" class="noEnterSubmit jsSubmit col-span-12 lg:col-span-9 2xl:col-span-10">
                 <!-- BEGIN: File Manager Filter -->
                 <div class="intro-y flex flex-col-reverse sm:flex-row items-center">
                     <div class="w-full sm:w-auto relative mr-auto mt-3 sm:mt-0">
@@ -97,9 +100,7 @@
                         <a href="<%= urlBack %>" class="btn btn-primary shadow-md mr-2">Back</a>
                         <% } %>
 
-                        <div onclick="main.wait.uploadFiles()" class="btn btn-primary shadow-md mr-2">
-                            Upload New Files
-                        </div>
+                        <div class="btn uploadFilesBtn btn-primary shadow-md mr-2">Upload New Files</div>
 
                         <div class="dropdown">
                             <div class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
@@ -140,7 +141,11 @@
                             </div>
 
                             <% if(element.isImage) { %>
-                            <a href="<%= element.path %>" class="w-3/5 file__icon file__icon--image mx-auto">
+                            <a
+                                target="_blank"
+                                href="<%= element.path %>"
+                                class="w-3/5 file__icon file__icon--image mx-auto"
+                            >
                                 <div class="file__icon--image__preview image-fit">
                                     <img alt="<%= element.name %>" loading="lazy" src="<%= element.path %>" />
                                 </div>

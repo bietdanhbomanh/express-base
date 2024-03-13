@@ -17,6 +17,7 @@ module.exports = {
         }
     },
     loginAjax: async function (req, res) {
+        console.log(req.body);
         const user = await userModel.findOne({ username: req.body.username });
         if (user) {
             // Xác thực password
@@ -28,16 +29,16 @@ module.exports = {
                     const token = jwt.sign({ userId: req.session.userId, ip: req.ip }, process.env.KEY);
                     res.cookie('token', token, { httpOnly: true, expires: new Date(Date.now() + 24 * 2 * 3600000) });
                 }
-                res.json({ status: 'success' });
+                res.json({ status: 1 });
             } else {
                 res.json({
-                    status: 'error',
+                    status: 0,
                     message: 'Lỗi xác thực',
                     form: { password: 'Mật khẩu không chính xác' },
                 });
             }
         } else {
-            res.json({ status: 'error', message: 'Lỗi xác thực', form: { username: 'Tài khoản không tồn tại' } });
+            res.json({ status: 0, message: 'Lỗi xác thực', form: { username: 'Tài khoản không tồn tại' } });
         }
     },
 
