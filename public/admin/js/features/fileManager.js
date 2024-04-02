@@ -8,6 +8,21 @@ function fileManager() {
         allCheckbox.prop('checked', false).trigger('change');
     });
 
+    allCheckbox.change(function () {
+        let anyChecked = false;
+        allCheckbox.each(function () {
+            if ($(this).is(':checked')) {
+                anyChecked = true;
+                return false; // Thoát khỏi vòng lặp nếu có checkbox được chọn
+            }
+        });
+        if (anyChecked) {
+            $('#delete-selected').removeClass('hidden');
+        } else {
+            $('#delete-selected').addClass('hidden');
+        }
+    });
+
     $('.deleteSingle').click(function (e) {
         let deleting = false;
         if (deleting) return;
@@ -42,21 +57,6 @@ function fileManager() {
         input.change(function () {
             $('#fileUpload').submit();
         });
-    });
-
-    allCheckbox.change(function () {
-        let anyChecked = false;
-        allCheckbox.each(function () {
-            if ($(this).is(':checked')) {
-                anyChecked = true;
-                return false; // Thoát khỏi vòng lặp nếu có checkbox được chọn
-            }
-        });
-        if (anyChecked) {
-            $('#delete-selected').removeClass('hidden');
-        } else {
-            $('#delete-selected').addClass('hidden');
-        }
     });
 
     $('#createFolder').click(function () {

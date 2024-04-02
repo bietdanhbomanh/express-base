@@ -1,5 +1,3 @@
-const validator = require('validator');
-
 const { mongoose } = require('../../config/db');
 
 const categorySchema = new mongoose.Schema(
@@ -7,9 +5,8 @@ const categorySchema = new mongoose.Schema(
         title: {
             type: String,
             required: true,
-            minlength: 5,
-            maxlength: 20,
             trim: true,
+            index: true,
         },
 
         metaTitle: {
@@ -27,6 +24,10 @@ const categorySchema = new mongoose.Schema(
             type: String,
         },
 
+        tags: {
+            type: [String],
+        },
+
         type: {
             type: String,
             required: true,
@@ -34,17 +35,17 @@ const categorySchema = new mongoose.Schema(
             lowercase: true,
             default: 'category',
         },
+        published: {
+            type: String,
+            required: true,
+            default: 'off',
+        },
+
         slug: {
             type: String,
             required: true,
+            lowercase: true,
             index: true,
-            unique: true,
-            validate: {
-                validator: function (value) {
-                    return validator.isSlug(value);
-                },
-                message: 'slug',
-            },
         },
 
         position: {
@@ -55,12 +56,34 @@ const categorySchema = new mongoose.Schema(
             type: mongoose.Schema.ObjectId,
             ref: 'Category',
         },
+
+        published: {
+            type: String,
+            default: 'off',
+        },
     },
     { timestamps: true }
 );
 
+categorySchema.index({ title: 'text', content: 'text', tags: 'text', description: 'text' });
+
 const categoryModel = mongoose.model('Category', categorySchema);
 
-categoryModel.findOneAndUpdate({ name: 'Uncategorized', slug: 'Uncategorized' }, { upsert: true });
+const data = {
+    slug: 'uncategorized',
+    title: 'Uncategorized',
+    description: 'Default category',
+    parent: null,
+    published: 'on',
+};
 
-exports = categoryModel;
+categoryModel
+    .findOneAndUpdate({ description: 'Default category' }, data, { upsert: true })
+    .then(() => {
+        console.log('Category mặc định');
+    })
+    .catch((error) => {
+        console.error('Lỗi category mặc định:', error);
+    });
+
+module.exports = categoryModel;

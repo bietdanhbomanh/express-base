@@ -1,5 +1,6 @@
 module.exports = function loadHelpers(req, res, next) {
     res.locals.helpers = helpers;
+    res.locals.urlHelper = urlHelper;
     next();
 };
 const helpers = {
@@ -84,5 +85,65 @@ const helpers = {
         menuHTML += `</ul>`;
 
         return menuHTML;
+    },
+
+    toSlug: function (text) {
+        // Chuyển đổi tiếng Việt có dấu thành không dấu
+        text = text.toLowerCase();
+        text = text.trim();
+        text = text.replace(/[áàảạã]/g, 'a');
+        text = text.replace(/[ắằẳẵặ]/g, 'a');
+        text = text.replace(/[âầấẫậ]/g, 'a');
+        text = text.replace(/[ềếểễệ]/g, 'e');
+        text = text.replace(/[èéẽẹẻ]/g, 'e');
+        text = text.replace(/[íìỉịĩ]/g, 'i');
+        text = text.replace(/[óòỏọõ]/g, 'o');
+        text = text.replace(/[ốồổỗộ]/g, 'o');
+        text = text.replace(/[úùủụũ]/g, 'u');
+        text = text.replace(/[ừứửựữ]/g, 'u');
+        text = text.replace(/[ýỳỷỵỹ]/g, 'y');
+        text = text.replace(/[đ]/g, 'd');
+        text = text.replace(/[ờớỡợở]/g, 'o');
+
+        text = text.replace(/[^a-zA-Z0-9\s]/g, '');
+        // Thay thế khoảng trắng bằng dấu gạch ngang
+        text = text.replace(/\s+/g, '-');
+
+        // Loại bỏ các dấu gạch ngang thừa
+
+        text = text.replace(/-+/g, '-');
+
+        // Loại bỏ dấu gạch ngang ở đầu và cuối chuỗi
+        text = text.trim('-');
+
+        return text;
+    },
+
+    handleFileName: (filename) => {
+        const [name, ext] = filename.split(/\.(?=[^.]+$)/);
+        return helpers.toSlug(name) + '.' + ext;
+    },
+};
+
+const urlHelper = {
+    concatQuery: function (queryString, obj) {
+        // Tách các cặp key-value từ chuỗi truy vấn
+        const queryParams = new URLSearchParams(queryString);
+
+        // Lặp qua các cặp key-value trong object
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                // Nếu key đã tồn tại trong queryString, thay thế giá trị
+                if (queryParams.has(key)) {
+                    queryParams.set(key, obj[key]);
+                } else {
+                    // Nếu không, thêm key-value mới vào queryString
+                    queryParams.append(key, obj[key]);
+                }
+            }
+        }
+
+        // Trả về chuỗi truy vấn mới
+        return queryParams.toString();
     },
 };

@@ -53,6 +53,10 @@
         background-color: rgb(var(--color-danger) / var(--tw-bg-opacity));
     }
 
+    &--warning &__header {
+        background-color: rgb(var(--color-warning) / var(--tw-bg-opacity));
+    }
+
     &__header {
         padding: 8px 16px;
         @include flexbox(space-between, center);
@@ -83,5 +87,13 @@
         padding: 2px;
         cursor: pointer;
         transition: 0s;
+    }
+}
+
+.dark {
+    .toast {
+        &__body {
+            background-color: #28334e;
+        }
     }
 }

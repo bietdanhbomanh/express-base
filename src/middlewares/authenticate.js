@@ -5,7 +5,7 @@ module.exports = async (req, res, next) => {
     if (req.session.userId) {
         // Xác thực session và lấy thông tin user
         const user = await userModel.findById(req.session.userId);
-        req.user = user;
+        res.locals.user = user;
         next();
     } else {
         // Hoặc xác thực bằng cookies và lấy thông tin user: trường hợp remember
@@ -15,11 +15,14 @@ module.exports = async (req, res, next) => {
                 if (data.ip === req.ip) {
                     req.session.userId = data.userId;
                     const user = await userModel.findById(req.session.userId);
-                    req.user = user;
+                    res.locals.user = user;
                     next();
                 }
             });
         } else {
+            // lấy url trước đó
+            req.session.redirect = req.originalUrl;
+
             // Chặn và bắt đăng nhập lại
             res.redirect('/admin/login');
         }

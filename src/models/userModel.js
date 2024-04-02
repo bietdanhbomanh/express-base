@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const validator = require('validator');
-const saltRounds = 10;
 
 const { mongoose } = require('../../config/db');
 
@@ -10,9 +9,16 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             minlength: 5,
-            maxlength: 20,
+            maxlength: 32,
             trim: true,
             unique: true,
+        },
+
+        displayName: {
+            type: String,
+            required: true,
+            minlength: 5,
+            trim: true,
         },
 
         email: {
@@ -46,7 +52,7 @@ const userSchema = new mongoose.Schema(
         },
         type: {
             type: String,
-            default: 'admin',
+            default: 'cms',
             required: true,
         },
     },
@@ -58,6 +64,7 @@ userSchema.methods.comparePassword = async function (password) {
 };
 
 userSchema.pre('save', async function (next) {
+    const saltRounds = 10;
     try {
         this.password = await bcrypt.hash(this.password, saltRounds);
     } catch (err) {
@@ -97,8 +104,9 @@ async function createOrUpdateUser(data) {
 // init create user
 createOrUpdateUser({
     username: 'admin',
-    password: 'password',
+    password: '@Tytyty123',
     email: 'admin@admin.com',
+    displayName: 'Administrator',
     roleCode: 0,
 });
 

@@ -1,5 +1,3 @@
-const validator = require('validator');
-
 const { mongoose } = require('../../config/db');
 
 const postSchema = new mongoose.Schema(
@@ -7,8 +5,6 @@ const postSchema = new mongoose.Schema(
         title: {
             type: String,
             required: true,
-            minlength: 5,
-            maxlength: 20,
             trim: true,
         },
 
@@ -27,17 +23,22 @@ const postSchema = new mongoose.Schema(
             type: String,
         },
 
+        thumbnail: {
+            type: String,
+        },
+
+        album: [String],
+
         slug: {
             type: String,
             required: true,
             index: true,
-            unique: true,
-            validate: {
-                validator: function (value) {
-                    return validator.isSlug(value);
-                },
-                message: 'slug',
-            },
+        },
+
+        published: {
+            type: String,
+            required: true,
+            default: 'off',
         },
 
         author: {
@@ -47,16 +48,21 @@ const postSchema = new mongoose.Schema(
             index: true,
         },
 
+        tags: [String],
+
         category: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Category',
+            type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
             required: true,
             index: true,
         },
+
+        publishedAt: Date,
     },
     { timestamps: true }
 );
 
+postSchema.index({ title: 'text', content: 'text', tags: 'text', description: 'text' });
+
 const postModel = mongoose.model('Post', postSchema);
 
-exports = postModel;
+module.exports = postModel;

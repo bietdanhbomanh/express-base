@@ -8,7 +8,6 @@ module.exports = {
             // Trường hợp đã đăng nhập
             res.redirect('/admin/dashboard');
         } else {
-            // Trường hợp chưa đăng nhập
             res.locals.page = {
                 shortTitle: 'Login',
                 title: 'Login CMS ' + process.env.WEB,
@@ -17,7 +16,6 @@ module.exports = {
         }
     },
     loginAjax: async function (req, res) {
-        console.log(req.body);
         const user = await userModel.findOne({ username: req.body.username });
         if (user) {
             // Xác thực password
@@ -29,7 +27,7 @@ module.exports = {
                     const token = jwt.sign({ userId: req.session.userId, ip: req.ip }, process.env.KEY);
                     res.cookie('token', token, { httpOnly: true, expires: new Date(Date.now() + 24 * 2 * 3600000) });
                 }
-                res.json({ status: 1 });
+                res.json({ status: 1, redirect: req.session.redirect, message: 'Chờ chuyển hướng', delay: 3000 });
             } else {
                 res.json({
                     status: 0,

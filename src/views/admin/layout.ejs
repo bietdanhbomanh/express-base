@@ -11,18 +11,13 @@
         <meta name="author" content="LEFT4CODE" />
         <title><%= page.title ?? 'No title'%></title>
         <!-- BEGIN: CSS Assets-->
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.5.2/css/tabulator.min.css"
-            integrity="sha512-HdUIebGeOK7s+At/fOnnbX8vsz6Cl1KTeiRlBiQABTMSqw7kZRCxGiUnuF9lr+1xz5y8pL7jkCR+NNtVVkEqKg=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.5.2/css/tabulator.min.css" />
+        <link rel="stylesheet" href="/plugin/ckeditor/skins/moono-lisa/editor.css" />
 
         <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet" />
 
         <link rel="stylesheet" href="/admin/css/style.css" />
-
         <link rel="stylesheet" href="/admin/scss/custom.css" />
         <!-- END: CSS Assets-->
     </head>
@@ -43,62 +38,38 @@
 
         <div id="toast"></div>
 
-        <!-- BEGIN: JS Assets-->
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
-            integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
-            integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
 
         <!-- scrollbar -->
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/simplebar/6.2.5/simplebar.min.js"
-            integrity="sha512-HV1U44HR4mYVDcsxzJpghYyGEy2PvbePe9UFXlV3vnzf4yFhbKA9QNpnhy4VWwnaC2jKzijITVWHPZBCOuc51g=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/simplebar/6.2.5/simplebar.min.js"></script>
 
         <!--Drop menu -->
         <script src="https://unpkg.com/@popperjs/core@2"></script>
+
         <!-- pack icon -->
         <script src="https://unpkg.com/lucide@latest"></script>
 
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.5.2/js/tabulator.min.js"
-            integrity="sha512-oU2NOn7vXb9igwNelYL+57+t+zb3liitNE8/NXg8QFJhBCSvH+dt9+s3H02aM41FUF7WYWx0kPeFV5yIkm1MVA=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
-
+        <!-- Tippy -->
         <script src="https://unpkg.com/tippy.js@6"></script>
 
-        <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js"
-            integrity="sha512-FwNWaxyfy2XlEINoSnZh1JQ5TRRtGow0D6XcmAWmYCRgvqOUTnzCxPc9uF35u5ZEpirk1uhlPVA19tflhvnW1g=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/litepicker/2.0.12/litepicker.js"
-            integrity="sha512-ZbnsrTCJAJWynwgi3ndt7jcjwrJfHNzUh/mZakBRhZG8lYgMVtZLxY2CG4GuONoER9E8iiuupt4fnrNfXy+aGA=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
+        <!-- editor -->
+        <script src="/plugin/ckeditor/ckeditor.js"></script>
+        <script src="/plugin/ckeditor/styles.js"></script>
+
+        <!-- Date picker  -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/litepicker/2.0.12/litepicker.js"></script>
+
+        <!-- Select js -->
         <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
-        <script src="/admin/js/main.js"></script>
+        <!-- Table data -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.5.2/js/tabulator.min.js"></script>
 
-        <% if (locals.js) { locals.js.forEach(element => { %>
-        <script src="/admin/js/features/<%= element %>.js"></script>
-        <% }); } %>
+        <script src="/admin/js/main.js"></script>
+        <script src="/admin/js/features/data.js"></script>
+        <script src="/admin/js/features/fileManager.js"></script>
 
         <!-- END: JS Assets-->
     </body>

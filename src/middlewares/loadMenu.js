@@ -66,20 +66,20 @@ module.exports = (req, res, next) => {
     //     }
     // });
 
-    // const url = req.path;
+    const url = req.path;
 
-    // activeMenu = function (menu) {
-    //     menu.forEach((item) => {
-    //         if (url.startsWith(item.url)) {
-    //             item.active = true;
-    //         } else {
-    //             item.active = false;
-    //         }
-    //         if (item.children) activeMenu(item.children);
-    //     });
-    // };
+    activeMenu = function (menu) {
+        menu.forEach((item) => {
+            if (url.startsWith(item.url)) {
+                item.active = true;
+            } else {
+                item.active = false;
+            }
+            if (item.children) activeMenu(item.children);
+        });
+    };
 
-    // activeMenu(menu);
+    activeMenu(menu);
 
     res.locals.menu = menu;
 

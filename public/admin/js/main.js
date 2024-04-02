@@ -32,6 +32,23 @@ const main = {
                 });
             });
         },
+
+        alert: function () {
+            function hide(el) {
+                dom(el).fadeOut(300, function () {
+                    dom(this).removeClass('show');
+
+                    // Trigger "hidden.tw.alert" callback function
+                    const event = new Event('hidden.tw.alert');
+                    dom(el)[0].dispatchEvent(event);
+                });
+            }
+
+            dom('body').on('click', "[data-tw-dismiss='alert']", function () {
+                hide(dom(this).closest('.alert'));
+            });
+        },
+
         tabContent: function () {
             dom('body').on('click', "[role='tab']", function () {
                 show(this);
@@ -83,112 +100,6 @@ const main = {
 
             dom("[role='tab']").each(function () {
                 this['__tab'] = createInstance(this);
-            });
-        },
-        tomSelect: function () {
-            $('.tom-select').each(function () {
-                let options = {
-                    plugins: {
-                        dropdown_input: {},
-                    },
-                };
-
-                if ($(this).data('placeholder')) {
-                    options.placeholder = $(this).data('placeholder');
-                }
-
-                if ($(this).attr('create')) {
-                    options.create = $(this).attr('create');
-                }
-
-                if ($(this).attr('multiple') !== undefined) {
-                    options = {
-                        ...options,
-                        plugins: {
-                            ...options.plugins,
-                            remove_button: {
-                                title: 'Remove this item',
-                            },
-                        },
-                        persist: false,
-                        // create: true,
-                        onDelete: function (values) {
-                            return confirm(
-                                values.length > 1
-                                    ? 'Are you sure you want to remove these ' + values.length + ' items?'
-                                    : 'Are you sure you want to remove "' + values[0] + '"?'
-                            );
-                        },
-                    };
-                }
-
-                if ($(this).data('header')) {
-                    options = {
-                        ...options,
-                        plugins: {
-                            ...options.plugins,
-                            dropdown_header: {
-                                title: $(this).data('header'),
-                            },
-                        },
-                    };
-                }
-
-                new TomSelect(this, options);
-            });
-        },
-        ckeditor: function () {
-            $('.editor').each(function () {
-                const el = this;
-                ClassicEditor.create(el).catch((error) => {
-                    console.error(error);
-                });
-            });
-            $('.editor-notool').each(function () {
-                const el = this;
-                ClassicEditor.create(el, { toolbar: [], autoParagraph: false }).catch((error) => {
-                    console.error(error);
-                });
-            });
-        },
-
-        datepicker: function () {
-            $('.datepicker').each(function () {
-                let options = {
-                    autoApply: false,
-                    singleMode: false,
-                    numberOfColumns: 2,
-                    numberOfMonths: 2,
-                    showWeekNumbers: true,
-                    format: 'D MMM, YYYY',
-                    dropdowns: {
-                        minYear: 1990,
-                        maxYear: null,
-                        months: true,
-                        years: true,
-                    },
-                };
-
-                if ($(this).data('single-mode')) {
-                    options.singleMode = true;
-                    options.numberOfColumns = 1;
-                    options.numberOfMonths = 1;
-                }
-
-                if ($(this).data('format')) {
-                    options.format = $(this).data('format');
-                }
-
-                if (!$(this).val()) {
-                    let date = dayjs().format(options.format);
-                    date += !options.singleMode ? ' - ' + dayjs().add(1, 'month').format(options.format) : '';
-                    $(this).val(date);
-                }
-
-                new Litepicker({
-                    element: this,
-                    ...options,
-                });
             });
         },
 
@@ -908,49 +819,88 @@ const main = {
                 });
             });
         },
-        jsSubmit: function () {
+        noEnterSubmit: function () {
             $('form.noEnterSubmit').on('keydown', function (event) {
                 if (event.key === 'Enter') {
                     event.preventDefault(); // Ngăn chặn hành vi mặc định của form
                 }
             });
-            $('form.jsSubmit').submit(function (event) {
-                event.preventDefault(); // Prevent the default form submission
-                if ($(this).valid()) {
-                    const button = $(this).find('[type="submit"]');
+        },
+        formHandle: function () {
+            $.extend($.validator.messages, {
+                required: 'Vui lòng nhập trường này.',
+                email: 'Hãy nhập email chính xác.',
+                minlength: $.validator.format('Vui lòng nhập nhiều hơn {0} ký tự.'),
+            });
+
+            $.validator.addMethod(
+                'noWhitespace',
+                function (value, element) {
+                    return !/\s/.test(value);
+                },
+                'Password should not contain whitespace.'
+            );
+
+            $('form.jsSubmit').validate({
+                invalidHandler: function (event, validator) {
+                    // Xóa tất cả các lớp lỗi trước khi thêm lớp lỗi mới
+                    $('.input-form').removeClass('has-error');
+
+                    // Lặp qua tất cả các trường không hợp lệ và thêm lớp lỗi cho phần tử cha
+                    $.each(validator.errorList, function (index, error) {
+                        $(error.element).closest('.input-form').addClass('has-error');
+                    });
+                    main.wait.toast('Có lỗi khi nhập data', 'error', 'Vui lòng kiểm tra lại các trường', 20);
+                },
+                submitHandler: function (nothing, event) {
+                    for (var instance in CKEDITOR.instances) {
+                        CKEDITOR.instances[instance].updateElement();
+                    }
+
+                    const form = event.target;
+                    const button = $(form).find('[type="submit"]');
+
                     button.prop('disabled', 'true');
                     icon = button.find('.hidden').removeClass('hidden');
 
                     let formData = {
-                        url: $(this).attr('action'), // The form's action attribute
-                        method: $(this).attr('method'), // The form's method attribute
+                        url: $(form).attr('action'), // The form's action attribute
+                        method: $(form).attr('method'), // The form's method attribute
                     };
 
-                    if ($(this).hasClass('uploadFile')) {
+                    if ($(form).hasClass('uploadFile')) {
                         formData = {
                             ...formData,
-                            data: new FormData(this), // Serialize the form data
+                            data: new FormData(form), // Serialize the form data
                             processData: false,
                             contentType: false,
                         };
                     } else {
                         formData = {
                             ...formData,
-                            data: $(this).serialize(),
+                            data: $(form).serialize(),
                         };
                     }
 
                     $.ajax({
                         ...formData,
                         success: function (response) {
-                            console.log(response);
-                            button.removeAttr('disabled');
-                            icon.addClass('hidden');
                             if (response.status) {
-                                location.reload();
+                                if (response.redirect) {
+                                    main.wait.toast('Thành công', 'success', response.message);
+                                    setTimeout(() => {
+                                        location.replace(response.redirect);
+                                    }, response.delay || 0);
+                                } else {
+                                    main.wait.toast('Thành công', 'success', response.message);
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, response.delay || 0);
+                                }
                             } else {
                                 main.wait.toast(response.message, 'error');
-                                console.log(response);
+                                button.removeAttr('disabled');
+                                icon.addClass('hidden');
                                 if (response.form) {
                                     Object.keys(response.form).forEach((element) => {
                                         const parrent = $('[name="' + element + '"]')
@@ -974,26 +924,23 @@ const main = {
                         error: function (xhr, status, error) {
                             button.removeAttr('disabled');
                             icon.addClass('hidden');
-                            main.wait.toast('Lỗi server', 'error');
+                            main.wait.toast('Lỗi server', 'error', error.message);
                         },
                     });
-                }
-            });
-        },
-        validatorForm: function () {
-            $.extend($.validator.messages, {
-                required: 'Vui lòng nhập trường này.',
-                email: 'Hãy nhập email chính xác.',
-                minlength: $.validator.format('Vui lòng nhập nhiều hơn {0} ký tự.'),
-            });
-
-            $.validator.addMethod(
-                'noWhitespace',
-                function (value, element) {
-                    return !/\s/.test(value);
                 },
-                'Password should not contain whitespace.'
-            );
+
+                success: function (label) {
+                    // Xóa lớp "has-error" khi trường được sửa đúng
+                    label.closest('.input-form').removeClass('has-error');
+                },
+
+                errorElement: 'div',
+
+                errorPlacement: function (error, element) {
+                    error.addClass('text-danger mt-2');
+                    error.insertAfter(element);
+                },
+            });
 
             $('form.validate').validate({
                 invalidHandler: function (event, validator) {
@@ -1004,12 +951,14 @@ const main = {
                     $.each(validator.errorList, function (index, error) {
                         $(error.element).closest('.input-form').addClass('has-error');
                     });
+                    main.wait.toast('Có lỗi khi nhập data', 'error', 'Vui lòng kiểm tra lại các trường', 20);
                 },
 
                 success: function (label) {
                     // Xóa lớp "has-error" khi trường được sửa đúng
                     label.closest('.input-form').removeClass('has-error');
                 },
+
                 errorElement: 'div',
 
                 errorPlacement: function (error, element) {
@@ -1018,278 +967,9 @@ const main = {
                 },
             });
         },
-
-        tableData: function () {
-            if ($('#tabulator').length) {
-                // Setup Tabulator
-                let table = new Tabulator('#tabulator', {
-                    ajaxURL: 'https://dummy-data.left4code.com',
-                    ajaxFiltering: true,
-                    sortMode: 'remote',
-                    printAsHtml: true,
-                    printStyled: true,
-                    filterMode: 'remote',
-                    pagination: true, //enable pagination
-                    paginationMode: 'remote',
-                    paginationSize: 5, //optional parameter to request a certain number of rows per page
-                    paginationInitialPage: 1, //optional parameter to set the initial page to load
-                    paginationSizeSelector: [5, 10, 20, 30],
-                    layout: 'fitColumns',
-                    responsiveLayout: 'collapse',
-                    placeholder: '<h2 class="text-center mt-3">No matching records found</h2>',
-                    columns: [
-                        {
-                            formatter: 'responsiveCollapse',
-                            width: 40,
-                            minWidth: 30,
-                            hozAlign: 'center',
-                            resizable: false,
-                            headerSort: false,
-                        },
-
-                        // For HTML table
-                        {
-                            title: 'PRODUCT NAME',
-                            minWidth: 200,
-                            responsive: 0,
-                            field: 'name',
-                            vertAlign: 'middle',
-                            print: false,
-                            download: false,
-                            formatter(cell, formatterParams) {
-                                return `<div>
-                                    <div class="font-medium whitespace-nowrap">${cell.getData().name}</div>
-                                    <div class="text-slate-500 text-xs whitespace-nowrap">${
-                                        cell.getData().category
-                                    }</div>
-                                </div>`;
-                            },
-                        },
-                        {
-                            title: 'IMAGES',
-                            minWidth: 200,
-                            field: 'images',
-                            hozAlign: 'center',
-                            vertAlign: 'middle',
-                            print: false,
-                            download: false,
-                            formatter(cell, formatterParams) {
-                                return `<div class="flex lg:justify-center">
-                                    <div class="intro-x w-10 h-10 image-fit">
-                                        <img alt="Midone - HTML Admin Template" class="rounded-full" src="/dist/images/${
-                                            cell.getData().images[0]
-                                        }">
-                                    </div>
-                                    <div class="intro-x w-10 h-10 image-fit -ml-5">
-                                        <img alt="Midone - HTML Admin Template" class="rounded-full" src="/dist/images/${
-                                            cell.getData().images[1]
-                                        }">
-                                    </div>
-                                    <div class="intro-x w-10 h-10 image-fit -ml-5">
-                                        <img alt="Midone - HTML Admin Template" class="rounded-full" src="/dist/images/${
-                                            cell.getData().images[2]
-                                        }">
-                                    </div>
-                                </div>`;
-                            },
-                        },
-                        {
-                            title: 'REMAINING STOCK',
-                            minWidth: 200,
-                            field: 'remaining_stock',
-                            hozAlign: 'center',
-                            vertAlign: 'middle',
-                            print: false,
-                            download: false,
-                        },
-                        {
-                            title: 'STATUS',
-                            minWidth: 200,
-                            field: 'status',
-                            hozAlign: 'center',
-                            vertAlign: 'middle',
-                            print: false,
-                            download: false,
-                            formatter(cell, formatterParams) {
-                                return `<div class="flex items-center lg:justify-center ${
-                                    cell.getData().status ? 'text-success' : 'text-danger'
-                                }">
-                                    <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> ${
-                                        cell.getData().status ? 'Active' : 'Inactive'
-                                    }
-                                </div>`;
-                            },
-                        },
-                        {
-                            title: 'ACTIONS',
-                            minWidth: 200,
-                            field: 'actions',
-                            responsive: 1,
-                            hozAlign: 'center',
-                            vertAlign: 'middle',
-                            print: false,
-                            download: false,
-                            formatter(cell, formatterParams) {
-                                let a = $(`<div class="flex lg:justify-center items-center">
-                                    <a class="edit flex items-center mr-3" href="javascript:;">
-                                        <i data-lucide="check-square" class="w-4 h-4 mr-1"></i> Edit
-                                    </a>
-                                    <a class="delete flex items-center text-danger" href="javascript:;">
-                                        <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Delete
-                                    </a>
-                                </div>`);
-                                $(a)
-                                    .find('.edit')
-                                    .on('click', function () {
-                                        alert('EDIT');
-                                    });
-
-                                $(a)
-                                    .find('.delete')
-                                    .on('click', function () {
-                                        alert('DELETE');
-                                    });
-
-                                return a[0];
-                            },
-                        },
-
-                        // For print format
-                        {
-                            title: 'PRODUCT NAME',
-                            field: 'name',
-                            visible: false,
-                            print: true,
-                            download: true,
-                        },
-                        {
-                            title: 'CATEGORY',
-                            field: 'category',
-                            visible: false,
-                            print: true,
-                            download: true,
-                        },
-                        {
-                            title: 'REMAINING STOCK',
-                            field: 'remaining_stock',
-                            visible: false,
-                            print: true,
-                            download: true,
-                        },
-                        {
-                            title: 'STATUS',
-                            field: 'status',
-                            visible: false,
-                            print: true,
-                            download: true,
-                            formatterPrint(cell) {
-                                return cell.getValue() ? 'Active' : 'Inactive';
-                            },
-                        },
-                        {
-                            title: 'IMAGE 1',
-                            field: 'images',
-                            visible: false,
-                            print: true,
-                            download: true,
-                            formatterPrint(cell) {
-                                return cell.getValue()[0];
-                            },
-                        },
-                        {
-                            title: 'IMAGE 2',
-                            field: 'images',
-                            visible: false,
-                            print: true,
-                            download: true,
-                            formatterPrint(cell) {
-                                return cell.getValue()[1];
-                            },
-                        },
-                        {
-                            title: 'IMAGE 3',
-                            field: 'images',
-                            visible: false,
-                            print: true,
-                            download: true,
-                            formatterPrint(cell) {
-                                return cell.getValue()[2];
-                            },
-                        },
-                    ],
-                });
-
-                table.on('renderComplete', function () {
-                    lucide.createIcons();
-                });
-
-                // Redraw table onresize
-                window.addEventListener('resize', () => {
-                    table.redraw();
-                    lucide.createIcons();
-                });
-
-                // Filter function
-                function filterHTMLForm() {
-                    let field = $('#tabulator-html-filter-field').val();
-                    let type = $('#tabulator-html-filter-type').val();
-                    let value = $('#tabulator-html-filter-value').val();
-                    table.setFilter(field, type, value);
-                }
-
-                // On submit filter form
-                $('#tabulator-html-filter-form')[0].addEventListener('keypress', function (event) {
-                    let keycode = event.keyCode ? event.keyCode : event.which;
-                    if (keycode == '13') {
-                        event.preventDefault();
-                        filterHTMLForm();
-                    }
-                });
-
-                // On click go button
-                $('#tabulator-html-filter-go').on('click', function (event) {
-                    filterHTMLForm();
-                });
-
-                // On reset filter form
-                $('#tabulator-html-filter-reset').on('click', function (event) {
-                    $('#tabulator-html-filter-field').val('name');
-                    $('#tabulator-html-filter-type').val('like');
-                    $('#tabulator-html-filter-value').val('');
-                    filterHTMLForm();
-                });
-
-                // Export
-                $('#tabulator-export-csv').on('click', function (event) {
-                    table.download('csv', 'data.csv');
-                });
-
-                $('#tabulator-export-json').on('click', function (event) {
-                    table.download('json', 'data.json');
-                });
-
-                $('#tabulator-export-xlsx').on('click', function (event) {
-                    window.XLSX = xlsx;
-                    table.download('xlsx', 'data.xlsx', {
-                        sheetName: 'Products',
-                    });
-                });
-
-                $('#tabulator-export-html').on('click', function (event) {
-                    table.download('html', 'data.html', {
-                        style: true,
-                    });
-                });
-
-                // Print
-                $('#tabulator-print').on('click', function (event) {
-                    table.print();
-                });
-            }
-        },
     },
     wait: {
-        toast: function toast(title = 'Success', type = 'error', content = '', duration = 10, html = '') {
+        toast: function toast(title = 'Thành công', type = 'success', content = '', duration = 10, html = '') {
             const toast = document.querySelector('#toast');
             if (toast) {
                 const toastItem = document.createElement('div');
@@ -1351,6 +1031,20 @@ const main = {
                 return true; // Tiếp tục gửi biểu mẫu
             } else {
                 return false; // Hủy gửi biểu mẫu
+            }
+        },
+
+        selectImage: function (element, CKEditorFuncNum) {
+            const url = $(element).find('img').attr('src');
+
+            if (window.location.search.includes('CKEditorFuncNum')) {
+                window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
+                window.close();
+            } else {
+                window.opener.postMessage(url, '*');
+                if (!window.location.search.includes('multi')) {
+                    window.close();
+                }
             }
         },
     },

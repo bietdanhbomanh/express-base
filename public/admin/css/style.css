@@ -15707,8 +15707,26 @@ html body{
     --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   }
+
+  .tom-select .ts-dropdown {
+  position: relative;
+  }
 .ts-wrapper {
     outline:none !important;
+  }
+
+  .ts-control:focus-visible {
+    outline: none;
+  }
+
+  .dark .ts-wrapper.single.input-active .ts-control {
+    background:rgb(var(--color-darkmode-800) / var(--tw-bg-opacity));
+    border-color: rgb(var(--color-darkmode-800) / var(--tw-bg-opacity));
+  }
+
+  .dark .plugin-dropdown_input.focus.dropdown-active .ts-control {
+    border-color: rgb(var(--color-darkmode-800) / var(--tw-bg-opacity));
+
   }
 .tom-select .ts-control .item {
       line-height: 22px;

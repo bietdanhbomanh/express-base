@@ -1,11 +1,19 @@
 module.exports = {
-    getError404: function (req, res) {
-        res.locals.page = {
-            shortTitle: 'Error not found',
-            title: 'Error not found CMS ' + process.env.WEB,
+    getErrorPage: function ({ req, res, code, message }) {
+        const data = {
+            code: code || 404,
+            message: message || 'You may have mistyped the address or the page may have moved.',
+            page: {
+                shortTitle: 'Error not found',
+                title: 'Error not found CMS ' + process.env.WEB,
+            },
+            layout: 'admin/layout',
+            main: 'pages/Error',
         };
-        res.locals.theme = req.cookies.theme ? req.cookies.theme : 'light';
-        res.status(404).render('admin/layout', { main: 'pages/404' });
+
+        Object.assign(res.locals, data);
+
+        res.status(data.code).render(data.layout, data);
     },
 
     getRefresh: function (req, res) {

@@ -21,11 +21,35 @@ module.exports = [
         url: '/admin/file-manager',
         children: [],
     },
+
+    {
+        icon: 'book-minus',
+        name: 'Category',
+        javascript: 'javascript:;',
+        url: '/admin/category',
+
+        children: [
+            {
+                icon: 'plus',
+                name: 'Add new',
+                url: '/admin/category/add',
+                children: [],
+            },
+            {
+                icon: 'default',
+                name: 'List',
+                url: '/admin/category/list',
+                children: [],
+            },
+        ],
+    },
     {
         icon: 'file-text',
         name: 'Post',
-        url: '/admin/post',
+        url: '/admin/categories',
         javascript: 'javascript:;',
+        url: '/admin/post',
+
         children: [
             {
                 icon: 'plus',
@@ -37,13 +61,6 @@ module.exports = [
                 icon: 'default',
                 name: 'List',
                 url: '/admin/post/list',
-                children: [],
-            },
-
-            {
-                icon: 'default',
-                name: 'Categories',
-                url: '/admin/post/categories',
                 children: [],
             },
         ],

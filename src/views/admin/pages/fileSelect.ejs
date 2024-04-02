@@ -1,0 +1,223 @@
+<div class="flex mt-[4.7rem] md:mt-0">
+    <!-- BEGIN: Content -->
+    <div class="content">
+        <div class="grid grid-cols-12 gap-6 mt-8">
+            <div class="col-span-12 lg:col-span-3 2xl:col-span-2">
+                <h2 class="intro-y text-lg font-medium mr-auto mt-2">File Manager</h2>
+                <!-- BEGIN: File Manager Menu -->
+                <div class="intro-y box p-5 mt-6">
+                    <div class="mt-1">
+                        <a
+                            href="?<%= urlHelper.concatQuery(queryString, {type: 'image'}) %>"
+                            class="flex items-center px-3 py-2 rounded-md <%= type === 'image' || !type ? 'bg-primary text-white font-medium' : '' %>"
+                        >
+                            <i class="w-4 h-4 mr-2" data-lucide="image"></i> Images
+                        </a>
+                        <a
+                            href="?<%= urlHelper.concatQuery(queryString, {type: 'video'}) %>"
+                            class="flex items-center px-3 py-2 mt-2 rounded-md <%= type === 'video' ? 'bg-primary text-white font-medium' : '' %>"
+                        >
+                            <i class="w-4 h-4 mr-2" data-lucide="video"></i> Videos
+                        </a>
+                        <a
+                            href="?<%= urlHelper.concatQuery(queryString, {type: 'doc'}) %>"
+                            class="flex items-center px-3 py-2 mt-2 rounded-md <%= type === 'doc' ? 'bg-primary text-white font-medium' : '' %>"
+                        >
+                            <i class="w-4 h-4 mr-2" data-lucide="file"></i> Documents
+                        </a>
+                        <a
+                            href="?<%= urlHelper.concatQuery(queryString, {type: 'all'}) %>"
+                            class="flex items-center px-3 py-2 mt-2 rounded-md <%= type === 'all' ? 'bg-primary text-white font-medium' : '' %>"
+                        >
+                            <i class="w-4 h-4 mr-2" data-lucide="users"></i> All
+                        </a>
+                    </div>
+                </div>
+                <!-- END: File Manager Menu -->
+            </div>
+
+            <form
+                hidden
+                action=""
+                method="PUT"
+                enctype="multipart/form-data"
+                class="uploadFile jsSubmit"
+                id="fileUpload"
+            >
+                <input type="file" name="files[]" id="fileInput" multiple />
+            </form>
+            <form action="" method="DELETE" class="noEnterSubmit jsSubmit col-span-12 lg:col-span-9 2xl:col-span-10">
+                <!-- BEGIN: File Manager Filter -->
+                <div class="intro-y flex flex-col-reverse sm:flex-row items-center">
+                    <div class="w-full sm:w-auto relative mr-auto mt-3 sm:mt-0">
+                        <i
+                            class="w-4 h-4 absolute my-auto inset-y-0 ml-3 left-0 z-10 text-slate-500"
+                            data-lucide="folder"
+                        ></i>
+                        <input
+                            type="text"
+                            class="form-control w-full sm:w-64 box px-10"
+                            placeholder="New folder name"
+                            name="folder"
+                        />
+                        <div id="createFolder" class="btn btn-primary shadow-md mt-3 sm:mt-0 sm:ml-2 ml-0">
+                            Create folder
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-auto flex">
+                        <button
+                            hidden
+                            type="submit"
+                            onclick="return main.wait.confirmSubmit()"
+                            class="btn btn-danger hidden shadow-md mr-2"
+                            id="delete-selected"
+                        >
+                            Delete Selected
+                        </button>
+
+                        <% if(pathChild) { %>
+                        <a href="<%= urlBack %>?<%= queryString %>" class="btn btn-primary shadow-md mr-2">Back</a>
+                        <% } %>
+
+                        <div class="btn uploadFilesBtn btn-primary shadow-md mr-2">Upload New Files</div>
+
+                        <div class="dropdown">
+                            <div class="dropdown-toggle btn px-2 box" aria-expanded="false" data-tw-toggle="dropdown">
+                                <span class="w-5 h-5 flex items-center justify-center">
+                                    <i class="w-4 h-4" data-lucide="plus"></i>
+                                </span>
+                            </div>
+                            <div class="dropdown-menu w-40">
+                                <ul class="dropdown-content">
+                                    <li>
+                                        <div id="selectAll" class="cursor-pointer dropdown-item">
+                                            <i data-lucide="settings" class="w-4 h-4 mr-2"></i> Chọn tất cả
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div id="removeSelectAll" class="cursor-pointer dropdown-item">
+                                            <i data-lucide="settings" class="w-4 h-4 mr-2"></i> Bỏ chọn tất cả
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: File Manager Filter -->
+                <!-- BEGIN: Directory & Files -->
+                <div class="intro-y grid grid-cols-12 gap-3 sm:gap-6 mt-5">
+                    <% pagination.result.forEach(element => { %>
+                    <div class="intro-y col-span-6 sm:col-span-4 md:col-span-3 2xl:col-span-2">
+                        <div class="file box rounded-md px-5 pt-8 pb-5 px-3 sm:px-5 relative zoom-in">
+                            <div class="absolute left-0 top-0 mt-3 ml-3">
+                                <input
+                                    value="<%= element.name %>"
+                                    class="form-check-input border border-slate-500"
+                                    type="checkbox"
+                                    name="files"
+                                />
+                            </div>
+
+                            <% if(element.isDisplay) { %>
+                            <a
+                                onclick="main.wait.selectImage(this, <%=CKEditorFuncNum %>); return false;"
+                                class="w-3/5 file__icon file__icon--image mx-auto"
+                            >
+                                <div class="file__icon--image__preview image-fit">
+                                    <img alt="<%= element.name %>" loading="lazy" src="<%= element.path %>" />
+                                </div>
+                            </a>
+                            <% } else { %>
+                            <a
+                                class="w-3/5 file__icon file__icon--<%= element.isFile ? 'file' : 'directory' %> mx-auto"
+                                href="<%= element.path %>?<%= queryString %>"
+                            >
+                                <% if(element.isFile){ %>
+                                <div class="file__icon__file-name"><%= element.extension.toUpperCase() %></div>
+                                <% } %>
+                            </a>
+                            <% } %>
+
+                            <a
+                                href="<%= element.path %>?<%= queryString %>"
+                                class="block font-medium mt-4 text-center truncate"
+                                ><%= element.name %></a
+                            >
+                            <div class="absolute top-0 right-0 mr-2 mt-3 dropdown ml-auto">
+                                <a class="deleteSingle w-5 h-5 block" href="javascript:;">
+                                    <i data-lucide="trash" class="w-5 h-5 text-slate-500"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+                <!-- END: Directory & Files -->
+                <!-- BEGIN: Pagination -->
+                <div class="intro-y flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-6">
+                    <nav class="w-full sm:w-auto sm:mr-auto">
+                        <% if(pagination.pages !== 0) { %>
+                        <ul class="pagination">
+                            <% if(pagination.currentPage !== 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?<%= urlHelper.concatQuery(queryString, {page: 1}) %>">
+                                    <i class="w-4 h-4" data-lucide="chevrons-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a
+                                    class="page-link"
+                                    href="?<%= urlHelper.concatQuery(queryString, {page: (pagination.currentPage > 1 ? pagination.currentPage - 1 : 1 )}) %>"
+                                >
+                                    <i class="w-4 h-4" data-lucide="chevron-left"></i>
+                                </a>
+                            </li>
+                            <% } %>
+                            <!-- <li class="page-item"><a class="page-link" href="#">...</a></li> -->
+
+                            <% for (let index = pagination.currentPage - 2; index < pagination.currentPage ; index++) {
+                            if(pagination.currentPage == 1) break; if (index == 0) continue; %>
+                            <li class="page-item">
+                                <a class="page-link" href="?<%= urlHelper.concatQuery(queryString, {page: 1}) %>"
+                                    ><%= index %></a
+                                >
+                            </li>
+                            <% } %> <% for (let index = pagination.currentPage; index <= pagination.currentPage + 2 ;
+                            index++) { %>
+                            <li class="page-item <%= index === pagination.currentPage ? 'active' : '' %>">
+                                <a class="page-link" href="?<%= urlHelper.concatQuery(queryString, {page: index}) %>"
+                                    ><%= index %></a
+                                >
+                            </li>
+                            <% if(index == pagination.pages) break; } %> <% if(pagination.currentPage !=
+                            pagination.pages) { %>
+                            <li class="page-item">
+                                <a
+                                    class="page-link"
+                                    href="?<%= urlHelper.concatQuery(queryString, {page: (pagination.pages > 2 ? pagination.currentPage + 1 : 2)}) %>"
+                                >
+                                    <i class="w-4 h-4" data-lucide="chevron-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a
+                                    class="page-link"
+                                    href="?<%= urlHelper.concatQuery(queryString, {page: pagination.pages}) %>"
+                                >
+                                    <i class="w-4 h-4" data-lucide="chevrons-right"></i>
+                                </a>
+                            </li>
+                            <% } %>
+                        </ul>
+                        <% } %>
+                    </nav>
+
+                    <div class="box py-2 px-2">Tất cả: <%=pagination.totalItems %></div>
+                </div>
+                <!-- END: Pagination -->
+            </form>
+        </div>
+    </div>
+    <!-- END: Content -->
+</div>

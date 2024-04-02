@@ -1,0 +1,403 @@
+<body class="py-5">
+    <%- include('../components/MenuMobile'); %>
+    <div class="flex mt-[4.7rem] md:mt-0">
+        <%- include('../components/Sidebar'); %>
+
+        <!-- BEGIN: Content -->
+        <div class="content">
+            <%- include('../components/Topbar'); %>
+
+            <form class="jsSubmit" action="<%= ajaxURL %>" method="<%= action === 'edit' ? 'PATCH' : 'PUT'  %>">
+                <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
+                    <h2 class="text-lg font-medium mr-auto">Add New Post</h2>
+                    <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
+                        <div class="dropdown mr-2">
+                            <button
+                                class="dropdown-toggle btn box flex items-center"
+                                aria-expanded="false"
+                                data-tw-toggle="dropdown"
+                            >
+                                English <i class="w-4 h-4 ml-2" data-lucide="chevron-down"></i>
+                            </button>
+                            <div class="dropdown-menu w-40">
+                                <ul class="dropdown-content">
+                                    <li>
+                                        <a href="" class="dropdown-item">
+                                            <i data-lucide="activity" class="w-4 h-4 mr-2"></i>
+                                            <span class="truncate">English</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="" class="dropdown-item">
+                                            <i data-lucide="activity" class="w-4 h-4 mr-2"></i>
+                                            <span class="truncate">Indonesian</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" class="btn box mr-2 flex items-center ml-auto sm:ml-0">
+                            <i class="w-4 h-4 mr-2" data-lucide="eye"></i> Preview
+                        </button>
+                        <button type="submit" class="dropdown-toggle btn btn-primary shadow-md flex items-center">
+                            <%= action === 'edit' ? 'Save' : 'Add new' %>
+                            <i class="w-4 h-4 ml-2" data-lucide="plus"></i>
+                            <i data-loading-icon="oval" data-color="white" class="w-4 h-4 ml-2 hidden"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="intro-y grid grid-cols-12 gap-5 mt-5">
+                    <!-- BEGIN: Post Content -->
+                    <div class="intro-y col-span-12 lg:col-span-8">
+                        <div class="post intro-y overflow-hidden box mt-5">
+                            <ul
+                                class="post__tabs nav nav-tabs flex-col sm:flex-row bg-slate-200 dark:bg-darkmode-800"
+                                role="tablist"
+                            >
+                                <li class="nav-item">
+                                    <div
+                                        title="Fill in the article content"
+                                        data-tw-toggle="tab"
+                                        data-tw-target="#content"
+                                        class="nav-link cursor-pointer tooltip w-full sm:w-40 py-4 active"
+                                        role="tab"
+                                        aria-selected="true"
+                                    >
+                                        <i data-lucide="file-text" class="w-4 h-4 mr-2"></i> Content
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <div
+                                        title="Adjust the meta title"
+                                        data-tw-toggle="tab"
+                                        data-tw-target="#meta-seo"
+                                        class="nav-link cursor-pointer tooltip w-full sm:w-40 py-4"
+                                        role="tab"
+                                        aria-selected="false"
+                                    >
+                                        <i data-lucide="align-left" class="w-4 h-4 mr-2"></i> Meta SEO
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <div
+                                        title="More information"
+                                        data-tw-toggle="tab"
+                                        data-tw-target="#more-information"
+                                        class="nav-link cursor-pointer tooltip w-full sm:w-40 py-4"
+                                        role="tab"
+                                        aria-selected="false"
+                                    >
+                                        <i data-lucide="code" class="w-4 h-4 mr-2"></i> More
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="post__content tab-content">
+                                <div id="content" class="tab-pane p-5 active" role="tabpanel">
+                                    <div class="border border-slate-200/60 dark:border-darkmode-400 rounded-md p-5">
+                                        <div
+                                            class="font-medium flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5"
+                                        >
+                                            <i data-lucide="chevron-down" class="w-4 h-4 mr-2"></i> Heading
+                                        </div>
+
+                                        <% if(action === 'edit') { %>
+                                        <input name="_id" value="<%= data._id %>" hidden />
+                                        <% } %>
+
+                                        <div class="mt-5 input-form">
+                                            <label for="title" class="form-label">Title</label>
+                                            <input
+                                                required
+                                                id="title"
+                                                name="title"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Write caption"
+                                                minlength="5"
+                                                value="<%= typeof data !== 'undefined' && data.title ? data.title : '' %>"
+                                            />
+                                        </div>
+
+                                        <div class="mt-3 input-form flex flex-col">
+                                            <label for="description" class="form-label">Description</label>
+
+                                            <textarea
+                                                class="form-control"
+                                                name="description"
+                                                id="description"
+                                                value="<%= typeof data !== 'undefined' && data.description ? data.description : '' %> %>"
+                                                rows="5"
+                                            >
+<%= typeof data !== 'undefined' && data.description ? data.description : '' %> %></textarea
+                                            >
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="mt-5 border border-slate-200/60 dark:border-darkmode-400 rounded-md p-5"
+                                    >
+                                        <div
+                                            class="font-medium flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5"
+                                        >
+                                            <i data-lucide="chevron-down" class="w-4 h-4 mr-2"></i> Text Content
+                                        </div>
+                                        <div class="mt-5">
+                                            <textarea name="content" class="ckeditor">
+<%= typeof data !== 'undefined' && data.content ? data.content : '<p>Type text here</p>' %></textarea
+                                            >
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="border border-slate-200/60 dark:border-darkmode-400 rounded-md p-5 mt-5"
+                                    >
+                                        <div
+                                            class="font-medium flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5"
+                                        >
+                                            <i data-lucide="chevron-down" class="w-4 h-4 mr-2"></i> Media
+                                        </div>
+                                        <div class="mt-5">
+                                            <div class="input-form dropZone">
+                                                <label for="thumbnail" class="form-label">Thumbnail</label>
+                                                <input
+                                                    id="thumbnail"
+                                                    name="thumbnail"
+                                                    type="text"
+                                                    class="form-control"
+                                                    placeholder="Image url"
+                                                />
+                                                <div
+                                                    class="border-2 border-dashed dark:border-darkmode-400 rounded-md pt-4"
+                                                >
+                                                    <div class="flex flex-wrap preview px-4 justify-center"></div>
+                                                    <div class="text-center dz-message cursor-pointer">
+                                                        <div class="text-lg font-medium">
+                                                            Drop files here or click to upload.
+                                                        </div>
+                                                        <div class="text-slate-500">
+                                                            This is just a demo dropzone. Selected files are
+                                                            <span class="font-medium">not</span> actually uploaded.
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="px-4 mt-3 pb-4 select-library inline-flex items-center cursor-pointer relative"
+                                                    >
+                                                        <i data-lucide="image" class="w-4 h-4 mr-2"></i>
+                                                        <span class="text-primary mr-1">Select from library</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <div class="input-form dropZone multi">
+                                                    <label for="album" class="form-label">Album</label>
+                                                    <input id="album[]" type="text" hidden class="multi" />
+                                                    <div
+                                                        class="border-2 border-dashed dark:border-darkmode-400 rounded-md pt-4"
+                                                    >
+                                                        <div class="flex preview flex-wrap preview px-4"></div>
+                                                        <div class="text-center dz-message cursor-pointer">
+                                                            <div class="text-lg font-medium">
+                                                                Drop files here or click to upload.
+                                                            </div>
+                                                            <div class="text-slate-500">
+                                                                This is just a demo dropzone. Selected files are
+                                                                <span class="font-medium">not</span> actually uploaded.
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            class="px-4 mt-3 select-library pb-4 inline-flex items-center cursor-pointer relative"
+                                                        >
+                                                            <i data-lucide="image" class="w-4 h-4 mr-2"></i>
+                                                            <span class="text-primary mr-1">Select from library</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="meta-seo" class="tab-pane p-5" role="tabpanel">
+                                    <div class="border border-slate-200/60 dark:border-darkmode-400 rounded-md p-5">
+                                        <div
+                                            class="font-medium flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5"
+                                        >
+                                            <i data-lucide="chevron-down" class="w-4 h-4 mr-2"></i> SEO
+                                        </div>
+                                        <div class="mt-5">
+                                            <label for="metaTitle" class="form-label">Meta title</label>
+                                            <input
+                                                id="metaTitle"
+                                                name="metaTitle"
+                                                type="text"
+                                                class="form-control"
+                                                value="<%= typeof data !== 'undefined' && data.metaTitle ? data.metaTitle : '' %> %>"
+                                                placeholder="Meta title"
+                                            />
+                                        </div>
+                                        <div class="mt-5">
+                                            <div class="mt-3 input-form flex flex-col">
+                                                <label for="metaDescripiton" class="form-label">Meta Descripiton</label>
+
+                                                <textarea
+                                                    class="form-control"
+                                                    name="metaDescription"
+                                                    id="metaDescription"
+                                                    rows="5"
+                                                >
+<%= typeof data !== 'undefined' && data.description ? data.description : '' %> %></textarea
+                                                >
+                                            </div>
+                                        </div>
+                                        <!-- <div class="mt-3">
+                                            <label for="keywords" class="form-label">Keywords</label>
+                                            <select
+                                                data-placeholder="Multiple"
+                                                class="tom-select w-full"
+                                                id="keywords"
+                                                name="keywords"
+                                                multiple
+                                                create="true"
+                                            >
+                                                <option value="1" selected>Horror</option>
+                                                <option value="2">Sci-fi</option>
+                                                <option value="3" selected>Action</option>
+                                                <option value="4">Drama</option>
+                                                <option value="5">Comedy</option>
+                                            </select>
+                                        </div> -->
+                                    </div>
+                                </div>
+
+                                <div id="more-information" class="tab-pane p-5" role="tabpanel">
+                                    <div class="border border-slate-200/60 dark:border-darkmode-400 rounded-md p-5">
+                                        <div
+                                            class="font-medium flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5"
+                                        >
+                                            <i data-lucide="chevron-down" class="w-4 h-4 mr-2"></i> Basic
+                                        </div>
+                                        <div class="mt-5 input-form">
+                                            <label for="slug" class="form-label">Slug</label>
+                                            <input
+                                                required
+                                                id="slug"
+                                                name="slug"
+                                                type="text"
+                                                value="<%= typeof data !== 'undefined' && data.slug ? data.slug : '' %> %>"
+                                                class="form-control"
+                                                placeholder="URL"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END: Post Content -->
+                    <!-- BEGIN: Post Info -->
+                    <div class="col-span-12 lg:col-span-4">
+                        <div class="intro-y box p-5">
+                            <% if(!(typeof data !== 'undefined')) { %>
+                            <div>
+                                <label for="publishedAt" class="form-label">Published at</label>
+                                <input
+                                    type="text"
+                                    class="datepicker form-control"
+                                    id="publishedAt"
+                                    name="publishedAt"
+                                    data-single-mode="true"
+                                />
+                            </div>
+                            <% } %>
+
+                            <div class="form-check form-switch flex flex-col items-start mt-3">
+                                <label for="published" class="form-check-label ml-0 mb-2">Published</label>
+                                <input id="published" class="form-check-input" <%= typeof data !== 'undefined' &&
+                                data.published && data.published == 'off' ? data.published : 'checked' %>
+                                name="published" type="checkbox" />
+                            </div>
+
+                            <div class="mt-3">
+                                <label for="position" class="form-label">position</label>
+                                <input
+                                    id="position"
+                                    name="position"
+                                    type="number"
+                                    class="form-control"
+                                    value="<%= typeof data !== 'undefined' && data.position  ? data.published : 0 %>"
+                                />
+                            </div>
+                            <% if(typeof categories !== "undefined") {%>
+                            <div class="mt-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select
+                                    data-placeholder="Select your Parent Category"
+                                    class="tom-select w-full"
+                                    id="category"
+                                    name="category[]"
+                                    multiple
+                                >
+                                    <% categories.forEach(element => { %>
+                                    <option value="<%= element._id.toString() %>"><%= element.title %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <% } %> <% if(typeof parents !== "undefined") {%>
+                            <div class="mt-3">
+                                <label for="parent" class="form-label">Parent</label>
+                                <select
+                                    data-placeholder="Select your Parent Category"
+                                    class="tom-select w-full"
+                                    id="parent"
+                                    name="parent"
+                                >
+                                    <% parents.forEach(element => { %>
+                                    <option value="<%= element._id.toString() %>"><%= element.title %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <% } %>
+
+                            <div class="mt-3">
+                                <label for="tags" class="form-label">Tags</label>
+                                <select
+                                    data-placeholder="Select tags or create a new one"
+                                    class="tom-select w-full"
+                                    id="tags"
+                                    name="tags[]"
+                                    multiple
+                                    create="true"
+                                >
+                                    <% tags.forEach(element => { %>
+                                    <option value="<%= element.title %>"><%= element.title %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+
+                            <% if(typeof users !== "undefined") {%>
+                            <div class="mt-3">
+                                <label for="author" class="form-label">Author</label>
+                                <select
+                                    data-placeholder="Select post's author"
+                                    class="tom-select w-full"
+                                    id="author"
+                                    name="author"
+                                >
+                                    <% users.forEach(element => { %>
+                                    <option
+                                        value="<%= element._id.toString() %>"
+                                        selected="<%= element._id.toString() === author._id.toString() ? 'true' : '' %>"
+                                    >
+                                        <%= element.displayName %>
+                                    </option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    <!-- END: Post Info -->
+                </div>
+            </form>
+        </div>
+        <!-- END: Content -->
+    </div>
+</body>

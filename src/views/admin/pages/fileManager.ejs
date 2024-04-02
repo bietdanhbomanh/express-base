@@ -12,45 +12,29 @@
                 <!-- BEGIN: File Manager Menu -->
                 <div class="intro-y box p-5 mt-6">
                     <div class="mt-1">
-                        <a href="" class="flex items-center px-3 py-2 rounded-md bg-primary text-white font-medium">
+                        <a
+                            href="?<%= urlHelper.concatQuery(queryString, {type: 'image'}) %>"
+                            class="flex items-center px-3 py-2 rounded-md <%= type === 'image' || !type ? 'bg-primary text-white font-medium' : '' %>"
+                        >
                             <i class="w-4 h-4 mr-2" data-lucide="image"></i> Images
                         </a>
-                        <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
+                        <a
+                            href="?<%= urlHelper.concatQuery(queryString, {type: 'video'}) %>"
+                            class="flex items-center px-3 py-2 mt-2 rounded-md <%= type === 'video' ? 'bg-primary text-white font-medium' : '' %>"
+                        >
                             <i class="w-4 h-4 mr-2" data-lucide="video"></i> Videos
                         </a>
-                        <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
+                        <a
+                            href="?<%= urlHelper.concatQuery(queryString, {type: 'doc'}) %>"
+                            class="flex items-center px-3 py-2 mt-2 rounded-md <%= type === 'doc' ? 'bg-primary text-white font-medium' : '' %>"
+                        >
                             <i class="w-4 h-4 mr-2" data-lucide="file"></i> Documents
                         </a>
-                        <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-                            <i class="w-4 h-4 mr-2" data-lucide="users"></i> Shared
-                        </a>
-                        <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-                            <i class="w-4 h-4 mr-2" data-lucide="trash"></i> Trash
-                        </a>
-                    </div>
-                    <div class="border-t border-slate-200 dark:border-darkmode-400 mt-4 pt-4">
-                        <a href="" class="flex items-center px-3 py-2 rounded-md">
-                            <div class="w-2 h-2 bg-pending rounded-full mr-3"></div>
-                            Custom Work
-                        </a>
-                        <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-                            <div class="w-2 h-2 bg-success rounded-full mr-3"></div>
-                            Important Meetings
-                        </a>
-                        <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-                            <div class="w-2 h-2 bg-warning rounded-full mr-3"></div>
-                            Work
-                        </a>
-                        <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-                            <div class="w-2 h-2 bg-pending rounded-full mr-3"></div>
-                            Design
-                        </a>
-                        <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-                            <div class="w-2 h-2 bg-danger rounded-full mr-3"></div>
-                            Next Week
-                        </a>
-                        <a href="" class="flex items-center px-3 py-2 mt-2 rounded-md">
-                            <i class="w-4 h-4 mr-2" data-lucide="plus"></i> Add New Label
+                        <a
+                            href="?<%= urlHelper.concatQuery(queryString, {type: 'all'}) %>"
+                            class="flex items-center px-3 py-2 mt-2 rounded-md <%= type === 'all' ? 'bg-primary text-white font-medium' : '' %>"
+                        >
+                            <i class="w-4 h-4 mr-2" data-lucide="users"></i> All
                         </a>
                     </div>
                 </div>
@@ -97,7 +81,7 @@
                         </button>
 
                         <% if(pathChild) { %>
-                        <a href="<%= urlBack %>" class="btn btn-primary shadow-md mr-2">Back</a>
+                        <a href="<%= urlBack %>?<%= queryString %>" class="btn btn-primary shadow-md mr-2">Back</a>
                         <% } %>
 
                         <div class="btn uploadFilesBtn btn-primary shadow-md mr-2">Upload New Files</div>
@@ -140,11 +124,11 @@
                                 />
                             </div>
 
-                            <% if(element.isImage) { %>
+                            <% if(element.isDisplay) { %>
                             <a
                                 target="_blank"
-                                href="<%= element.path %>"
                                 class="w-3/5 file__icon file__icon--image mx-auto"
+                                href="<%= element.path %>"
                             >
                                 <div class="file__icon--image__preview image-fit">
                                     <img alt="<%= element.name %>" loading="lazy" src="<%= element.path %>" />
@@ -152,7 +136,7 @@
                             </a>
                             <% } else { %>
                             <a
-                                href="<%= element.path %>"
+                                href="<%= element.path %>?<%= queryString %>"
                                 class="w-3/5 file__icon file__icon--<%= element.isFile ? 'file' : 'directory' %> mx-auto"
                             >
                                 <% if(element.isFile){ %>
@@ -160,8 +144,10 @@
                                 <% } %>
                             </a>
                             <% } %>
-
-                            <a href="<%= element.path %>" class="block font-medium mt-4 text-center truncate"
+                            <a
+                                target="_blank"
+                                href="<%= element.path %>?<%= queryString %>"
+                                class="block font-medium mt-4 text-center truncate"
                                 ><%= element.name %></a
                             >
                             <div class="absolute top-0 right-0 mr-2 mt-3 dropdown ml-auto">
@@ -181,14 +167,14 @@
                         <ul class="pagination">
                             <% if(pagination.currentPage !== 1) { %>
                             <li class="page-item">
-                                <a class="page-link" href="?page=1">
+                                <a class="page-link" href="?<%= urlHelper.concatQuery(queryString, {page: 1}) %>">
                                     <i class="w-4 h-4" data-lucide="chevrons-left"></i>
                                 </a>
                             </li>
                             <li class="page-item">
                                 <a
                                     class="page-link"
-                                    href="?page=<%= pagination.currentPage > 1 ? pagination.currentPage - 1 : 1  %>"
+                                    href="?<%= urlHelper.concatQuery(queryString, {page: (pagination.currentPage > 1 ? pagination.currentPage - 1 : 1 )}) %>"
                                 >
                                     <i class="w-4 h-4" data-lucide="chevron-left"></i>
                                 </a>
@@ -199,25 +185,32 @@
                             <% for (let index = pagination.currentPage - 2; index < pagination.currentPage ; index++) {
                             if(pagination.currentPage == 1) break; if (index == 0) continue; %>
                             <li class="page-item">
-                                <a class="page-link" href="?page=<%= index %>"><%= index %></a>
+                                <a class="page-link" href="?<%= urlHelper.concatQuery(queryString, {page: 1}) %>"
+                                    ><%= index %></a
+                                >
                             </li>
                             <% } %> <% for (let index = pagination.currentPage; index <= pagination.currentPage + 2 ;
                             index++) { %>
                             <li class="page-item <%= index === pagination.currentPage ? 'active' : '' %>">
-                                <a class="page-link" href="?page=<%= index %>"><%= index %></a>
+                                <a class="page-link" href="?<%= urlHelper.concatQuery(queryString, {page: index}) %>"
+                                    ><%= index %></a
+                                >
                             </li>
                             <% if(index == pagination.pages) break; } %> <% if(pagination.currentPage !=
                             pagination.pages) { %>
                             <li class="page-item">
                                 <a
                                     class="page-link"
-                                    href="?page=<%= pagination.pages > 2 ? pagination.currentPage + 1 : 2 %>"
+                                    href="?<%= urlHelper.concatQuery(queryString, {page: (pagination.pages > 2 ? pagination.currentPage + 1 : 2)}) %>"
                                 >
                                     <i class="w-4 h-4" data-lucide="chevron-right"></i>
                                 </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page=<%= pagination.pages %>">
+                                <a
+                                    class="page-link"
+                                    href="?<%= urlHelper.concatQuery(queryString, {page: pagination.pages}) %>"
+                                >
                                     <i class="w-4 h-4" data-lucide="chevrons-right"></i>
                                 </a>
                             </li>

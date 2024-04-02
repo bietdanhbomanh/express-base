@@ -2,14 +2,15 @@ const express = require('express');
 const { login, logout, loginAjax } = require('../controllers/admin/login');
 const dashboard = require('../controllers/admin/dashboard.js');
 const menu = require('../controllers/admin/menu.js');
-const { add, list, categories, listAjax } = require('../controllers/admin/post');
-const fileManager = require('../controllers/admin/fileMananger.js');
+const dataHandle = require('../controllers/admin/data');
+const ajaxData = require('../controllers/admin/ajaxData');
+const fileManager = require('../controllers/admin/fileManager.js');
 const authenticate = require('../middlewares/authenticate');
 const loadConfig = require('../middlewares/loadConfig');
 const loadMenu = require('../middlewares/loadMenu.js');
 const loadHelpers = require('../utils/helpers');
 
-const { getError404 } = require('../utils/getPage');
+const { getErrorPage } = require('../utils/getPage');
 
 const router = express.Router();
 
@@ -25,19 +26,21 @@ router.get('/admin', (req, res) => {
 });
 
 router.get('/admin/dashboard', ...adminMiddlewares, dashboard);
-router.get('/admin/menus', ...adminMiddlewares, menu);
 
-router.get('/admin/post/categories', ...adminMiddlewares, categories);
+router.get('/admin/menus', ...adminMiddlewares, menu);
 
 router.all('/admin/file-manager*', ...adminMiddlewares, fileManager);
 
-router.all('/admin/post/add', ...adminMiddlewares, add);
+router.get('/admin/:type(category|post)/:action(add|list|edit)(/:id)?', ...adminMiddlewares, dataHandle);
 
-router.get('/admin/post/list', ...adminMiddlewares, list);
-router.get('/admin/post/listajax', ...adminMiddlewares, listAjax);
+router.post('/admin/:type/ajaxlist', ...adminMiddlewares, ajaxData.list);
+router.put('/admin/:type/ajaxadd', ...adminMiddlewares, ajaxData.add);
+router.patch('/admin/:type/ajaxedit', ...adminMiddlewares, ajaxData.edit);
+router.delete('/admin/:type/ajaxdelete', ...adminMiddlewares, ajaxData.delete);
+router.delete('/admin/:type/ajaxmultidelete', ...adminMiddlewares, ajaxData.multiDelete);
 
 router.get('*', loadConfig, (req, res) => {
-    getError404(req, res);
+    getErrorPage(req, res);
 });
 
 module.exports = router;
