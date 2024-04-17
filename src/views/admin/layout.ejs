@@ -1,42 +1,58 @@
 <!DOCTYPE html>
 
-<html lang="en" class="<%= theme %>">
-    <!-- BEGIN: Head -->
-    <head>
-        <meta charset="utf-8" />
-        <link href="/admin/images/logo.svg" rel="shortcut icon" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="<%= page.description ?? 'No description'%>" />
-        <meta name="keywords" content="<%= page.keywords ?? 'No keywords'%>" />
-        <meta name="author" content="LEFT4CODE" />
-        <title><%= page.title ?? 'No title'%></title>
-        <!-- BEGIN: CSS Assets-->
+<html lang="en" class="<%= config.theme %>">
+<!-- BEGIN: Head -->
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.5.2/css/tabulator.min.css" />
-        <link rel="stylesheet" href="/plugin/ckeditor/skins/moono-lisa/editor.css" />
+<head>
+    <meta charset="utf-8" />
+    <link href="/admin/images/logo.svg" rel="shortcut icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="<%= page.description ?? 'No description'%>" />
+    <meta name="keywords" content="<%= page.keywords ?? 'No keywords'%>" />
+    <meta name="author" content="LEFT4CODE" />
+    <title>
+        <%= page.title ?? 'No title' %>
+    </title>
+    <!-- BEGIN: CSS Assets-->
 
-        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.5.2/css/tabulator.min.css" />
+    <link rel="stylesheet" href="/plugin/ckeditor/skins/moono-lisa/editor.css" />
 
-        <link rel="stylesheet" href="/admin/css/style.css" />
-        <link rel="stylesheet" href="/admin/scss/custom.css" />
-        <!-- END: CSS Assets-->
-    </head>
-    <!-- END: Head -->
-    <body class="py-5 <%= typeof mainClass !== 'undefined' ? mainClass : '' %>">
-        <%- include(main); %>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet" />
 
+    <link rel="stylesheet" href="/admin/css/style.css" />
+    <link rel="stylesheet" href="/admin/scss/custom.css" />
+    <!-- END: CSS Assets-->
+</head>
+<!-- END: Head -->
+
+<body class="py-5 <%= typeof mainClass !== 'undefined' ? mainClass : '' %>">
+    <%- include(main); %>
         <!-- BEGIN: Dark Mode Switcher-->
         <div
-            class="dark-mode-switcher cursor-pointer shadow-md fixed bottom-0 right-0 box border rounded-full w-40 h-12 flex items-center justify-center z-50 mb-10 mr-10"
-        >
+            class="dark-mode-switcher cursor-pointer shadow-md fixed bottom-0 right-0 box border rounded-full w-40 h-12 flex items-center justify-center z-50 mb-10 mr-10">
             <div class="mr-4 text-slate-600 dark:text-slate-200">Dark Mode</div>
             <div
-                class="dark-mode-switcher__toggle border <%= theme === 'dark' ? 'dark-mode-switcher__toggle--active' : '' %>"
-            ></div>
+                class="dark-mode-switcher__toggle border <%= config.theme === 'dark' ? 'dark-mode-switcher__toggle--active' : '' %>">
+            </div>
         </div>
         <!-- END: Dark Mode Switcher-->
 
-        <div id="toast"></div>
+        <div id="toast">
+            <% if(typeof toast !=='undefined' ) { %>
+                <div class="toast toast--<%= toast.type %>" style="animation: 0.4s linear 5s 1 normal forwards running fadeout;">
+                    <div class="toast__header">
+                        <span class="toast__lable"><%= toast.title %></span>
+                        <span class="toast__time"></span>
+                    </div>
+                    <div class="toast__body">
+                        <p class="toast__content">
+                            <%- toast.content %>
+                        </p>
+                    </div>
+                </div>
+            <% } %>
+        </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
@@ -72,5 +88,6 @@
         <script src="/admin/js/features/fileManager.js"></script>
 
         <!-- END: JS Assets-->
-    </body>
+</body>
+
 </html>

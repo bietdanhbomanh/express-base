@@ -27,7 +27,10 @@ const postSchema = new mongoose.Schema(
             type: String,
         },
 
-        album: [String],
+        album: {
+            type: [String],
+            default: [],
+        },
 
         slug: {
             type: String,
@@ -35,9 +38,9 @@ const postSchema = new mongoose.Schema(
             index: true,
         },
 
-        published: {
+        status: {
             type: String,
-            required: true,
+            enum: ['on', 'off'],
             default: 'off',
         },
 
@@ -46,14 +49,23 @@ const postSchema = new mongoose.Schema(
             ref: 'User',
             required: true,
             index: true,
+            default: null,
         },
 
-        tags: [String],
+        order: {
+            type: Number,
+            default: 0,
+        },
 
-        category: {
+        tags: {
+            type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
+            default: [],
+        },
+
+        categories: {
             type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
-            required: true,
             index: true,
+            default: [],
         },
 
         publishedAt: Date,
@@ -61,7 +73,7 @@ const postSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-postSchema.index({ title: 'text', content: 'text', tags: 'text', description: 'text' });
+postSchema.index({ title: 'text', content: 'text', description: 'text' });
 
 const postModel = mongoose.model('Post', postSchema);
 

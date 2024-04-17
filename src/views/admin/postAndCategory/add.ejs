@@ -1,0 +1,56 @@
+<body class="py-5">
+    <%- include('../components/MenuMobile'); %>
+    <div class="flex mt-[4.7rem] md:mt-0">
+        <%- include('../components/Sidebar'); %>
+
+        <!-- BEGIN: Content -->
+        <div class="content">
+            <%- include('../components/Topbar'); %>
+
+            <form class="jsSubmit" action="<%= ajaxURL %>" method="<%= action === 'edit' ? 'PATCH' : 'PUT'  %>">
+                <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
+                    <h2 class="text-lg font-medium mr-auto"><%= (action +' '+ type).toUpperCase() %></h2>
+                    <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
+                        <div class="dropdown mr-2">
+                            <button
+                                class="dropdown-toggle btn box flex items-center"
+                                aria-expanded="false"
+                                data-tw-toggle="dropdown"
+                            >
+                                English <i class="w-4 h-4 ml-2" data-lucide="chevron-down"></i>
+                            </button>
+                            <div class="dropdown-menu w-40">
+                                <ul class="dropdown-content">
+                                    <li>
+                                        <a href="" class="dropdown-item">
+                                            <i data-lucide="activity" class="w-4 h-4 mr-2"></i>
+                                            <span class="truncate">English</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="" class="dropdown-item">
+                                            <i data-lucide="activity" class="w-4 h-4 mr-2"></i>
+                                            <span class="truncate">Indonesian</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" class="btn box mr-2 flex items-center ml-auto sm:ml-0">
+                            <i class="w-4 h-4 mr-2" data-lucide="eye"></i> Preview
+                        </button>
+                        <button type="submit" class="dropdown-toggle btn btn-primary shadow-md flex items-center">
+                            <%= action === 'edit' ? 'Save' : 'Add new' %>
+                            <i class="w-4 h-4 ml-2" data-lucide="plus"></i>
+                            <i data-loading-icon="oval" data-color="white" class="w-4 h-4 ml-2 hidden"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="intro-y grid grid-cols-12 gap-5 mt-5">
+                    <%- include('./_form.ejs') %>
+                </div>
+            </form>
+        </div>
+        <!-- END: Content -->
+    </div>
+</body>

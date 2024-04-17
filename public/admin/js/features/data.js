@@ -52,7 +52,7 @@ const data = {
                     ${type !== 0 ? `<input hidden name="${options.name}" value="${src}" />` : ''}
                     <div class="${
                         type === 0 ? '' : 'multi'
-                    } tooltip w-5 h-5 flex items-center justify-center absolute rounded-full text-white bg-danger right-0 top-0 -mr-2 -mt-2">
+                    } removeImage w-5 h-5 flex items-center justify-center absolute rounded-full text-white bg-danger right-0 top-0 -mr-2 -mt-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide lucide-x w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ const data = {
                 }
             });
 
-            dropZone.on('click', '.tooltip', function (e) {
+            dropZone.on('click', '.removeImage', function (e) {
                 if ($(e.currentTarget).hasClass('multi')) {
                     $(e.currentTarget).parent().remove();
                     if (dropZone.find('img').length === 0) {
@@ -196,6 +196,9 @@ const data = {
                     const nameInput = currentDrop.children('input').attr('id');
                     const imgElement = getImageElement(event.data, 1, { name: nameInput });
                     currentDrop.find('.preview').append(imgElement);
+                    if (currentDrop.find('img').length > 0) {
+                        currentDrop.find('.dz-message').addClass('hidden');
+                    }
                 } else {
                     currentDrop.children('input').val(event.data).trigger('change');
                 }
@@ -242,8 +245,6 @@ const data = {
                             vertAlign: 'middle',
                             hozAlign: 'center',
                             width: 56,
-                            print: false,
-                            download: false,
                             formatter(cell, formatterParams) {
                                 return `<input class="form-check-input" name="delete" data-id="${
                                     cell.getData()._id
@@ -254,13 +255,90 @@ const data = {
                             title: 'Title',
                             minWidth: 200,
                             responsive: 0,
+                            visible: false,
                             field: 'title',
                             vertAlign: 'middle',
-                            print: false,
-                            download: false,
                             formatter(cell, formatterParams) {
                                 return `<div>
                                     <div class="font-medium whitespace-nowrap">${cell.getData().title}</div>
+                                </div>`;
+                            },
+                        },
+
+                        {
+                            title: 'Username',
+                            minWidth: 200,
+                            responsive: 0,
+                            visible: false,
+                            field: 'username',
+                            vertAlign: 'middle',
+                            formatter(cell, formatterParams) {
+                                return `<div>
+                                    <div class="font-medium whitespace-nowrap">${cell.getData().username}</div>
+                                </div>`;
+                            },
+                        },
+
+                        {
+                            title: 'Display Name',
+                            minWidth: 200,
+                            responsive: 0,
+                            visible: false,
+                            field: 'displayName',
+                            vertAlign: 'middle',
+                            formatter(cell, formatterParams) {
+                                return `<div>
+                                    <div class="font-medium whitespace-nowrap">${cell.getData().displayName}</div>
+                                </div>`;
+                            },
+                        },
+
+                        {
+                            title: 'Role',
+                            minWidth: 140,
+                            responsive: 0,
+                            visible: false,
+                            field: 'role',
+                            headerHozAlign: 'center', // Căn giữa ngang tiêu đề
+                            hozAlign: 'center', // Căn giữa ngang dữ liệu
+                            vertAlign: 'middle',
+                            formatter(cell, formatterParams) {
+                                return `<div>
+                                    <div class="font-medium whitespace-nowrap">${cell.getData().role}</div>
+                                </div>`;
+                            },
+                        },
+
+                        {
+                            title: 'Email',
+                            minWidth: 200,
+                            responsive: 0,
+                            visible: false,
+                            field: 'email',
+                            vertAlign: 'middle',
+                            formatter(cell, formatterParams) {
+                                return `<div>
+                                    <div class="font-medium whitespace-nowrap">${cell.getData().email}</div>
+                                </div>`;
+                            },
+                        },
+
+                        {
+                            title: 'Avatar',
+                            width: 120,
+                            headerHozAlign: 'center', // Căn giữa ngang tiêu đề
+                            hozAlign: 'center', // Căn giữa ngang dữ liệu
+                            vertAlign: 'middle', // Căn giữa dọc dữ liệu
+                            headerSort: false,
+                            responsive: 0,
+                            field: 'avatar',
+                            visible: false,
+                            formatter(cell, formatterParams) {
+                                return `
+                                <div class="w-10 h-10 image-fit zoom-in">
+                                  <img alt="Midone - HTML Admin Template" class="rounded-lg border-1 border-white shadow-md" src="${
+                                      cell.getData().avatar
+                                  }">
                                 </div>`;
                             },
                         },
@@ -273,9 +351,30 @@ const data = {
                             vertAlign: 'middle', // Căn giữa dọc dữ liệu
                             headerSort: false,
                             responsive: 0,
-                            field: 'Thumbnail',
-                            print: false,
-                            download: false,
+                            field: 'thumbnail',
+                            visible: false,
+
+                            formatter(cell, formatterParams) {
+                                return `
+                                <div class="w-10 h-10 image-fit zoom-in">
+                                  <img alt="Midone - HTML Admin Template" class="rounded-lg border-1 border-white shadow-md" src="${
+                                      cell.getData().thumbnail
+                                  }">
+                                </div>`;
+                            },
+                        },
+
+                        {
+                            title: 'Thumbnail',
+                            width: 120,
+                            headerHozAlign: 'center', // Căn giữa ngang tiêu đề
+                            hozAlign: 'center', // Căn giữa ngang dữ liệu
+                            vertAlign: 'middle', // Căn giữa dọc dữ liệu
+                            headerSort: false,
+                            responsive: 0,
+                            field: 'thumbnail',
+                            visible: false,
+
                             formatter(cell, formatterParams) {
                                 return `
                                 <div class="w-10 h-10 image-fit zoom-in">
@@ -292,23 +391,21 @@ const data = {
                             headerHozAlign: 'center', // Căn giữa ngang tiêu đề
                             hozAlign: 'center', // Căn giữa ngang dữ liệu
                             vertAlign: 'middle', // Căn giữa dọc dữ liệu
-
                             field: 'category',
                             responsive: 0,
+                            visible: false,
                             headerSort: false,
 
-                            print: false,
-                            download: false,
                             formatter(cell, formatterParams) {
-                                if (cell.getData().category === undefined) {
-                                    table.hideColumn('category');
-                                    return;
+                                if (cell.getData().categories) {
+                                    const titles = cell
+                                        .getData()
+                                        .categories.map((object) => '<div>' + object.title + '</div>');
+                                    const joinedString = titles.join('');
+                                    return `<div>
+                                        <div class="font-medium whitespace-nowrap">${joinedString}</div>
+                                    </div>`;
                                 }
-                                const titles = cell.getData().category.map((object) => object.title);
-                                const joinedString = titles.join(', ');
-                                return `<div>
-                                    <div class="font-medium whitespace-nowrap">${joinedString}</div>
-                                </div>`;
                             },
                         },
 
@@ -318,19 +415,11 @@ const data = {
                             headerHozAlign: 'center', // Căn giữa ngang tiêu đề
                             hozAlign: 'center', // Căn giữa ngang dữ liệu
                             vertAlign: 'middle', // Căn giữa dọc dữ liệu
-
+                            visible: false,
                             field: 'parent',
                             responsive: 0,
                             headerSort: false,
-
-                            print: false,
-                            download: false,
                             formatter(cell, formatterParams) {
-                                if (cell.getData().parent === undefined) {
-                                    table.hideColumn('parent');
-                                    return;
-                                }
-
                                 return `<div>
                                     <div class="font-medium whitespace-nowrap">${
                                         cell.getData().parent ? cell.getData().parent.title : ''
@@ -348,8 +437,7 @@ const data = {
                             headerSort: false,
                             responsive: 0,
                             field: 'slug',
-                            print: false,
-                            download: false,
+                            visible: false,
                             formatter(cell, formatterParams) {
                                 return `<a class="text-slate-500 flex items-center mr-3" href="javascript:;">
                                 <i data-lucide="external-link"></i>${cell.getData().slug}
@@ -358,45 +446,42 @@ const data = {
                         },
 
                         {
-                            title: 'Position',
+                            title: 'Order',
                             width: 140,
                             headerHozAlign: 'center', // Căn giữa ngang tiêu đề
                             hozAlign: 'center', // Căn giữa ngang dữ liệu
                             vertAlign: 'middle', // Căn giữa dọc dữ liệu
-
-                            field: 'position',
+                            field: 'order',
+                            visible: false,
                             responsive: 0,
 
-                            print: false,
-                            download: false,
                             formatter(cell, formatterParams) {
-                                if (cell.getData().position === undefined) {
-                                    table.hideColumn('position');
-                                    return;
-                                }
                                 return `<div>
-                                    <div class="font-medium whitespace-nowrap">${cell.getData().position}</div>
+                                    <div class="font-medium whitespace-nowrap">${cell.getData().order ?? ''}</div>
                                 </div>`;
                             },
                         },
 
                         {
-                            title: 'Published',
+                            title: 'Status',
                             width: 140,
-                            field: 'published',
+                            field: 'status',
+                            visible: false,
                             headerHozAlign: 'center', // Căn giữa ngang tiêu đề
                             hozAlign: 'center', // Căn giữa ngang dữ liệu
                             vertAlign: 'middle', // Căn giữa dọc dữ liệu
-
-                            print: false,
-                            download: false,
+                            visible: false,
                             formatter(cell, formatterParams) {
-                                return `<div class="flex items-center lg:justify-center ${
-                                    cell.getData().published === 'on' ? 'text-success' : 'text-danger'
+                                return `<div data-id="${
+                                    cell.getData()._id
+                                }" class="flex items-center toggleStatus lg:justify-center ${
+                                    cell.getData().status === 'on' ? 'text-success' : 'text-danger'
                                 }">
-                                   <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> ${
-                                       cell.getData().published === 'on' ? 'Active' : 'Inactive'
-                                   }
+                                   <i data-lucide="check-square" class="w-4 h-4 mr-2"></i>
+                                   <span>
+                                   ${cell.getData().status === 'on' ? 'Active' : 'Inactive'}
+                                   </span>
+                                   
                                </div>`;
                             },
                         },
@@ -436,11 +521,8 @@ const data = {
                             hozAlign: 'center', // Căn giữa ngang dữ liệu
                             vertAlign: 'middle', // Căn giữa dọc dữ liệu
                             width: 160,
-                            sortable: false,
                             responsive: 0,
                             headerSort: false,
-                            print: false,
-                            download: false,
                             formatter(cell, formatterParams) {
                                 const a = $(`<div class="flex flex-wrap justify-center items-center">
                                     <a class="edit flex items-center mr-3" href="${new URL(
@@ -465,22 +547,23 @@ const data = {
                                             $.ajax({
                                                 url: new URL(location.href).pathname.replace('/list', '/ajaxdelete'),
                                                 data: {
-                                                    _id: cell.getData()._id,
+                                                    _ids: [cell.getData()._id],
                                                 },
                                                 method: 'DELETE',
                                                 success: function (response) {
                                                     // Hiển thị thông báo thành công
+                                                    const message = response.message
                                                     if (response.status) {
-                                                        main.wait.toast('Đã xóa', 'success');
+                                                        main.wait.toast(message, 'success');
                                                         // const row = table.getRow({ _id: cell.getData()._id });
                                                         $(e.target).closest('.tabulator-row').remove();
                                                     } else {
-                                                        main.wait.toast('Xóa thật bại vui lòng kiểm tra lại', 'error');
+                                                        main.wait.toast(message, 'error');
                                                     }
                                                 },
                                                 error: function (error) {
                                                     // Hiển thị thông báo lỗi
-                                                    main.wait.toast('Lỗi hệ thống mạng', 'error');
+                                                    main.wait.toast('Lỗi khi thực hiện', 'error');
                                                 },
                                             });
                                         }
@@ -493,110 +576,28 @@ const data = {
                         {
                             title: 'Updated At',
                             responsive: 0,
-
                             width: 160,
                             headerHozAlign: 'center', // Căn giữa ngang tiêu đề
                             hozAlign: 'center', // Căn giữa ngang dữ liệu
                             vertAlign: 'middle', // Căn giữa dọc dữ liệu
                             field: 'updatedAt',
-                            print: false,
-                            download: false,
                         },
-
-                        // {
-                        //     title: 'REMAINING STOCK',
-                        //     minWidth: 200,
-                        //     field: 'remaining_stock',
-                        //     hozAlign: 'center',
-                        //     vertAlign: 'middle',
-                        //     print: false,
-                        //     download: false,
-                        // },
-                        // {
-                        //     title: 'STATUS',
-                        //     minWidth: 200,
-                        //     field: 'status',
-                        //     hozAlign: 'center',
-                        //     vertAlign: 'middle',
-                        //     print: false,
-                        //     download: false,
-                        //     formatter(cell, formatterParams) {
-                        //         return `<div class="flex items-center lg:justify-center ${
-                        //             cell.getData().status ? 'text-success' : 'text-danger'
-                        //         }">
-                        //             <i data-lucide="check-square" class="w-4 h-4 mr-2"></i> ${
-                        //                 cell.getData().status ? 'Active' : 'Inactive'
-                        //             }
-                        //         </div>`;
-                        //     },
-                        // },
-
-                        // // For print format
-                        // {
-                        //     title: 'PRODUCT NAME',
-                        //     field: 'name',
-                        //     visible: false,
-                        //     print: true,
-                        //     download: true,
-                        // },
-                        // {
-                        //     title: 'CATEGORY',
-                        //     field: 'category',
-                        //     visible: false,
-                        //     print: true,
-                        //     download: true,
-                        // },
-                        // {
-                        //     title: 'REMAINING STOCK',
-                        //     field: 'remaining_stock',
-                        //     visible: false,
-                        //     print: true,
-                        //     download: true,
-                        // },
-                        // {
-                        //     title: 'STATUS',
-                        //     field: 'status',
-                        //     visible: false,
-                        //     print: true,
-                        //     download: true,
-                        //     formatterPrint(cell) {
-                        //         return cell.getValue() ? 'Active' : 'Inactive';
-                        //     },
-                        // },
-                        // {
-                        //     title: 'IMAGE 1',
-                        //     field: 'images',
-                        //     visible: false,
-                        //     print: true,
-                        //     download: true,
-                        //     formatterPrint(cell) {
-                        //         return cell.getValue()[0];
-                        //     },
-                        // },
-                        // {
-                        //     title: 'IMAGE 2',
-                        //     field: 'images',
-                        //     visible: false,
-                        //     print: true,
-                        //     download: true,
-                        //     formatterPrint(cell) {
-                        //         return cell.getValue()[1];
-                        //     },
-                        // },
-                        // {
-                        //     title: 'IMAGE 3',
-                        //     field: 'images',
-                        //     visible: false,
-                        //     print: true,
-                        //     download: true,
-                        //     formatterPrint(cell) {
-                        //         return cell.getValue()[2];
-                        //     },
-                        // },
                     ],
                 });
 
                 table.on('renderComplete', function () {
+                    const data = table.getData()[0];
+                    const trueFields = [];
+                    for (const key in data) {
+                        if (data[key]) {
+                            trueFields.push(key);
+                        }
+                    }
+                    if (trueFields) {
+                        trueFields.forEach((element) => {
+                            table.showColumn(element);
+                        });
+                    }
                     lucide.createIcons();
                 });
 
@@ -698,7 +699,7 @@ const data = {
                         .get();
 
                     $.ajax({
-                        url: new URL(location.href).pathname.replace('/list', '/ajaxmultidelete'),
+                        url: new URL(location.href).pathname.replace('/list', '/ajaxdelete'),
                         data: {
                             _ids,
                         },
@@ -706,19 +707,55 @@ const data = {
                         success: function (response) {
                             // Hiển thị thông báo thành công
                             if (response.status) {
-                                main.wait.toast('Đã xóa', 'success');
+                                main.wait.toast(response.message, 'success');
                                 $('#selectAll').prop('checked', false).trigger('change');
                                 table.replaceData();
                             } else {
-                                main.wait.toast('Xóa thật bại vui lòng kiểm tra lại', 'error');
+                                main.wait.toast(response.message, 'error');
                             }
                         },
                         error: function (error) {
                             // Hiển thị thông báo lỗi
-                            main.wait.toast('Lỗi hệ thống mạng', 'error');
+                            main.wait.toast('Lỗi khi thực hiện', 'error');
                         },
                     });
                 }
+            });
+
+            // toggle Status
+
+            $(document).on('click', '.toggleStatus', function (e) {
+                const current = $(e.currentTarget);
+                const _id = current.data('id');
+                const currentStatus = current.find('span').text().trim() === 'Active';
+                $.ajax({
+                    url: new URL(location.href).pathname.replace('/list', '/ajaxedit'),
+                    data: {
+                        _id,
+                        status: currentStatus ? 'off' : 'on',
+                    },
+                    method: 'PATCH',
+                    success: function (response) {
+                        // Hiển thị thông báo thành công
+                        if (response.status) {
+                            main.wait.toast('Cập nhật thành công', 'success');
+                            console.log(response.data.status);
+                            if (currentStatus) {
+                                current.addClass('text-danger').removeClass('text-success');
+                                current.find('span').text('Inactive');
+                            } else {
+                                current.addClass('text-success').removeClass('text-danger');
+                                current.find('span').text('Active');
+                            }
+                        } else {
+                            main.wait.toast('Cập nhật thất bại vui lòng kiểm tra lại', 'error');
+                        }
+                    },
+                    error: function (error) {
+                        // Hiển thị thông báo lỗi
+                        main.wait.toast('Lỗi cập nhật', 'error');
+                    },
+                });
             });
         },
 

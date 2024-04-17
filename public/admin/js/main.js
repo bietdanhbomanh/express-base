@@ -33,22 +33,6 @@ const main = {
             });
         },
 
-        alert: function () {
-            function hide(el) {
-                dom(el).fadeOut(300, function () {
-                    dom(this).removeClass('show');
-
-                    // Trigger "hidden.tw.alert" callback function
-                    const event = new Event('hidden.tw.alert');
-                    dom(el)[0].dispatchEvent(event);
-                });
-            }
-
-            dom('body').on('click', "[data-tw-dismiss='alert']", function () {
-                hide(dom(this).closest('.alert'));
-            });
-        },
-
         tabContent: function () {
             dom('body').on('click', "[role='tab']", function () {
                 show(this);
@@ -893,9 +877,14 @@ const main = {
                                     }, response.delay || 0);
                                 } else {
                                     main.wait.toast('Thành công', 'success', response.message);
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, response.delay || 0);
+                                    if (response.reload) {
+                                        setTimeout(() => {
+                                            location.reload();
+                                        }, response.delay || 0);
+                                    } else {
+                                        button.removeAttr('disabled');
+                                        icon.addClass('hidden');
+                                    }
                                 }
                             } else {
                                 main.wait.toast(response.message, 'error');
@@ -916,7 +905,7 @@ const main = {
                                         setTimeout(function () {
                                             errorMessage.remove();
                                             parrent.removeClass('has-error');
-                                        }, 3000);
+                                        }, 20000);
                                     });
                                 }
                             }

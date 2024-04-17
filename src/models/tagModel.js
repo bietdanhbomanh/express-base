@@ -7,10 +7,6 @@ const tagSchema = new mongoose.Schema({
         trim: true,
     },
 
-    description: {
-        type: String,
-    },
-
     slug: {
         type: String,
         required: true,

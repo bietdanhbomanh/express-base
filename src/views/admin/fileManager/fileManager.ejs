@@ -1,6 +1,11 @@
+<%- include('../components/MenuMobile'); %>
 <div class="flex mt-[4.7rem] md:mt-0">
+    <%- include('../components/Sidebar'); %>
+
     <!-- BEGIN: Content -->
     <div class="content">
+        <%- include('../components/Topbar'); %>
+
         <div class="grid grid-cols-12 gap-6 mt-8">
             <div class="col-span-12 lg:col-span-3 2xl:col-span-2">
                 <h2 class="intro-y text-lg font-medium mr-auto mt-2">File Manager</h2>
@@ -8,25 +13,25 @@
                 <div class="intro-y box p-5 mt-6">
                     <div class="mt-1">
                         <a
-                            href="?<%= urlHelper.concatQuery(queryString, {type: 'image'}) %>"
+                            href="?<%= urlHelper.mergeQuery(queryString, {type: 'image'}) %>"
                             class="flex items-center px-3 py-2 rounded-md <%= type === 'image' || !type ? 'bg-primary text-white font-medium' : '' %>"
                         >
                             <i class="w-4 h-4 mr-2" data-lucide="image"></i> Images
                         </a>
                         <a
-                            href="?<%= urlHelper.concatQuery(queryString, {type: 'video'}) %>"
+                            href="?<%= urlHelper.mergeQuery(queryString, {type: 'video'}) %>"
                             class="flex items-center px-3 py-2 mt-2 rounded-md <%= type === 'video' ? 'bg-primary text-white font-medium' : '' %>"
                         >
                             <i class="w-4 h-4 mr-2" data-lucide="video"></i> Videos
                         </a>
                         <a
-                            href="?<%= urlHelper.concatQuery(queryString, {type: 'doc'}) %>"
+                            href="?<%= urlHelper.mergeQuery(queryString, {type: 'doc'}) %>"
                             class="flex items-center px-3 py-2 mt-2 rounded-md <%= type === 'doc' ? 'bg-primary text-white font-medium' : '' %>"
                         >
                             <i class="w-4 h-4 mr-2" data-lucide="file"></i> Documents
                         </a>
                         <a
-                            href="?<%= urlHelper.concatQuery(queryString, {type: 'all'}) %>"
+                            href="?<%= urlHelper.mergeQuery(queryString, {type: 'all'}) %>"
                             class="flex items-center px-3 py-2 mt-2 rounded-md <%= type === 'all' ? 'bg-primary text-white font-medium' : '' %>"
                         >
                             <i class="w-4 h-4 mr-2" data-lucide="users"></i> All
@@ -121,8 +126,9 @@
 
                             <% if(element.isDisplay) { %>
                             <a
-                                onclick="main.wait.selectImage(this, <%=CKEditorFuncNum %>); return false;"
+                                target="_blank"
                                 class="w-3/5 file__icon file__icon--image mx-auto"
+                                href="<%= element.path %>"
                             >
                                 <div class="file__icon--image__preview image-fit">
                                     <img alt="<%= element.name %>" loading="lazy" src="<%= element.path %>" />
@@ -130,16 +136,16 @@
                             </a>
                             <% } else { %>
                             <a
-                                class="w-3/5 file__icon file__icon--<%= element.isFile ? 'file' : 'directory' %> mx-auto"
                                 href="<%= element.path %>?<%= queryString %>"
+                                class="w-3/5 file__icon file__icon--<%= element.isFile ? 'file' : 'directory' %> mx-auto"
                             >
                                 <% if(element.isFile){ %>
                                 <div class="file__icon__file-name"><%= element.extension.toUpperCase() %></div>
                                 <% } %>
                             </a>
                             <% } %>
-
                             <a
+                                target="_blank"
                                 href="<%= element.path %>?<%= queryString %>"
                                 class="block font-medium mt-4 text-center truncate"
                                 ><%= element.name %></a
@@ -154,68 +160,7 @@
                     <% }); %>
                 </div>
                 <!-- END: Directory & Files -->
-                <!-- BEGIN: Pagination -->
-                <div class="intro-y flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-6">
-                    <nav class="w-full sm:w-auto sm:mr-auto">
-                        <% if(pagination.pages !== 0) { %>
-                        <ul class="pagination">
-                            <% if(pagination.currentPage !== 1) { %>
-                            <li class="page-item">
-                                <a class="page-link" href="?<%= urlHelper.concatQuery(queryString, {page: 1}) %>">
-                                    <i class="w-4 h-4" data-lucide="chevrons-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a
-                                    class="page-link"
-                                    href="?<%= urlHelper.concatQuery(queryString, {page: (pagination.currentPage > 1 ? pagination.currentPage - 1 : 1 )}) %>"
-                                >
-                                    <i class="w-4 h-4" data-lucide="chevron-left"></i>
-                                </a>
-                            </li>
-                            <% } %>
-                            <!-- <li class="page-item"><a class="page-link" href="#">...</a></li> -->
-
-                            <% for (let index = pagination.currentPage - 2; index < pagination.currentPage ; index++) {
-                            if(pagination.currentPage == 1) break; if (index == 0) continue; %>
-                            <li class="page-item">
-                                <a class="page-link" href="?<%= urlHelper.concatQuery(queryString, {page: 1}) %>"
-                                    ><%= index %></a
-                                >
-                            </li>
-                            <% } %> <% for (let index = pagination.currentPage; index <= pagination.currentPage + 2 ;
-                            index++) { %>
-                            <li class="page-item <%= index === pagination.currentPage ? 'active' : '' %>">
-                                <a class="page-link" href="?<%= urlHelper.concatQuery(queryString, {page: index}) %>"
-                                    ><%= index %></a
-                                >
-                            </li>
-                            <% if(index == pagination.pages) break; } %> <% if(pagination.currentPage !=
-                            pagination.pages) { %>
-                            <li class="page-item">
-                                <a
-                                    class="page-link"
-                                    href="?<%= urlHelper.concatQuery(queryString, {page: (pagination.pages > 2 ? pagination.currentPage + 1 : 2)}) %>"
-                                >
-                                    <i class="w-4 h-4" data-lucide="chevron-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a
-                                    class="page-link"
-                                    href="?<%= urlHelper.concatQuery(queryString, {page: pagination.pages}) %>"
-                                >
-                                    <i class="w-4 h-4" data-lucide="chevrons-right"></i>
-                                </a>
-                            </li>
-                            <% } %>
-                        </ul>
-                        <% } %>
-                    </nav>
-
-                    <div class="box py-2 px-2">Tất cả: <%=pagination.totalItems %></div>
-                </div>
-                <!-- END: Pagination -->
+                <%- include('_pagination.ejs') %>
             </form>
         </div>
     </div>

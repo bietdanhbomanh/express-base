@@ -1,0 +1,223 @@
+<body class="py-5">
+    <%- include('../components/MenuMobile'); %>
+    <div class="flex mt-[4.7rem] md:mt-0">
+        <%- include('../components/Sidebar'); %>
+
+        <!-- BEGIN: Content -->
+        <div class="content">
+            <%- include('../components/Topbar'); %>
+            <form class="jsSubmit" action="<%= ajaxURL %>" method="<%= action === 'edit' ? 'PATCH' : 'PUT'  %>">
+                <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
+                    <h2 class="text-lg font-medium mr-auto"><%= (action +' '+ type).toUpperCase() %></h2>
+                    <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
+                        <button type="submit" class="dropdown-toggle btn btn-primary shadow-md flex items-center">
+                            <%= action === 'edit' ? 'Save' : 'Add new' %>
+                            <i class="w-4 h-4 ml-2" data-lucide="plus"></i>
+                            <i data-loading-icon="oval" data-color="white" class="w-4 h-4 ml-2 hidden"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="intro-y grid grid-cols-12 gap-5 mt-5">
+                    <div class="intro-y col-span-12 lg:col-span-8">
+                        <div class="post intro-y overflow-hidden box">
+                            <div class="border border-slate-200/60 dark:border-darkmode-400 rounded-md p-5">
+                                <div
+                                    class="font-medium flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-5"
+                                >
+                                    <i data-lucide="chevron-down" class="w-4 h-4 mr-2"></i> Profile
+                                </div>
+                    
+                                <% if(action === 'edit') { %>
+                                    <input name="_id" value="<%= data._id %>" hidden />
+                                <% } %>
+                                <div class="mt-5 input-form">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input
+                                        maxlength="20"
+                                        id="username"
+                                        name="username"
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Write caption"
+                                        minlength="6"
+                                        required
+                                        value="<%= data.username %>"
+                                    />
+                                </div>
+                    
+                                <div class="mt-5 input-form">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        class="form-control"
+                                        value="<%= data.email %>"
+                                    />
+                                </div>
+
+                                <% if(action === 'edit' && user._id.toString() === data._id.toString()) { %>
+                                    <div class="mt-5 input-form">
+                                        <label for="oldPassword" class="form-label">Old password</label>
+                                        <input
+                                            id="oldPassword"
+                                            name="oldPassword"
+                                            type="password"
+                                            class="form-control"
+                                            minlength="6"
+                                            required
+                                            value=""
+                                        />
+                                    </div>
+                                    <div class="mt-5 input-form">
+                                        <label for="password" class="form-label">New Password</label>
+                                        <input
+                                            id="password"
+                                            name="password"
+                                            type="password"
+                                            class="form-control"
+                                            minlength="6"
+                                            required
+                                            value=""
+                                            equalTo="#password"
+                                        />
+                                    </div>
+                                    <div class="mt-5 input-form">
+                                        <label for="comfirm" class="form-label">Comfirm Password</label>
+                                        <input
+                                            id="comfirm"
+                                            name="comfirm"
+                                            type="password"
+                                            class="form-control"
+                                            minlength="6"
+                                            required
+                                            value=""
+                                            equalTo="#password"
+                                        />
+                                    </div>
+                                <% } else { %>
+                                    <div class="mt-5 input-form">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input
+                                            id="password"
+                                            name="password"
+                                            type="password"
+                                            class="form-control"
+                                            minlength="6"
+                                            required
+                                            value=""
+                                        />
+                                    </div>
+                                    <div class="mt-5 input-form">
+                                        <label for="comfirm" class="form-label">Comfirm Password</label>
+                                        <input
+                                            id="comfirm"
+                                            name="comfirm"
+                                            type="password"
+                                            class="form-control"
+                                            minlength="6"
+                                            required
+                                            value=""
+                                            equalTo="#password"
+                                        />
+                                    </div>
+                                    
+                                 <% } %>
+                                <div class="mt-5 input-form">
+                                    <label for="displayName" class="form-label">Display name</label>
+                                    <input
+                                        id="displayName"
+                                        name="displayName"
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Write caption"
+                                        minlength="6"
+                                        maxlength="32"
+                                        required
+                                        value="<%= data.displayName %>"
+                                    />
+                                </div>
+                                <div class="mt-3 input-form flex flex-col">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" name="description" id="description" rows="5"><%=  data.description %></textarea>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="input-form dropZone">
+                                        <label for="avatar" class="form-label">Avatar</label>
+                                        <input
+                                            id="avatar"
+                                            name="avatar"
+                                            type="text"
+                                            class="form-control"
+                                            placeholder="Image url"
+                                            value="<%= data.avatar %>"/>
+                                        <div class="border-2 border-dashed dark:border-darkmode-400 rounded-md pt-4">
+                                            <div class="flex flex-wrap preview px-4 justify-center">
+                                                <% if (data.avatar) { %>
+                                                    <div class="w-32 h-32 relative image-fit cursor-pointer zoom-in">
+                                                        <img class="rounded-md" src="<%= data.avatar %>">
+                                                        <div class="removeImage w-5 h-5 flex items-center justify-center absolute rounded-full text-white bg-danger right-0 top-0 -mr-2 -mt-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide lucide-x w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                                                        </div>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                            <div class="text-center dz-message cursor-pointer <%= data.avatar ? 'hidden' : '' %>">
+                                                <div class="text-lg font-medium">Drop files here or click to upload.</div>
+                                                <div class="text-slate-500">
+                                                    This is just a demo dropzone. Selected files are
+                                                    <span class="font-medium">not</span> actually uploaded.
+                                                </div>
+                                            </div>
+            
+                                            <div
+                                                class="px-4 mt-3 pb-4 select-library inline-flex items-center cursor-pointer relative"
+                                            >
+                                                <i data-lucide="image" class="w-4 h-4 mr-2"></i>
+                                                <span class="text-primary mr-1">Select from library</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-12 lg:col-span-4">
+                        <div class="intro-y box p-5">
+                            <% if((action === 'edit' && user._id.toString() !== data._id.toString()) || action === 'add') { %>
+                                <div class="form-check form-switch flex flex-col mt-3 items-start">
+                                    <label for="status" class="form-check-label ml-0 mb-2">Status</label>
+                                    <input id="status" class="form-check-input" <%= data.status && data.status === 'off' ? '' : 'checked' %> name="status" type="checkbox" />
+                                </div>
+                               
+                                <div class="mt-3">
+                                    <label for="roleCode" class="form-label">Role</label>
+                                    <select data-placeholder="Select role" class="tom-select w-full" id="roleCode" name="roleCode">
+                                        <% roles.forEach((element, index) => { if(index - 1 < user.roleCode ) return %>
+                                        <option
+                                        <%= data.roleCode && data.roleCode === index ? 'selected' : '' %>
+                                        <%= !data.roleCode && user.roleCode === index ? 'selected' : '' %>
+                                        value="<%= index %>">
+                                            <%= element %>
+                                        </option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+                            <% } %>
+                            <div class="mt-3">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select data-placeholder="Select gender" class="tom-select w-full" id="gender" name="gender">
+                                    <option <%= data.gender === 'male' ? 'selected' : '' %> value="male">Male</option>
+                                    <option <%= data.gender === 'female' ? 'selected' : '' %> value="female">Female</option>
+                                    <option <%= data.gender === 'other' ? 'selected' : '' %> value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </form>
+        </div>
+        <!-- END: Content -->
+    </div>
+</body>

@@ -1,0 +1,56 @@
+<!-- BEGIN: Pagination -->
+<div class="intro-y flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-6">
+    <nav class="w-full sm:w-auto sm:mr-auto">
+        <% if(pagination.pages !==0) { %>
+            <ul class="pagination">
+                <% if(pagination.currentPage !== 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?<%= urlHelper.mergeQuery(queryString, {page: 1}) %>">
+                            <i class="w-4 h-4" data-lucide="chevrons-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?<%= urlHelper.mergeQuery(queryString, {page: (pagination.currentPage > 1 ? pagination.currentPage - 1 : 1 )}) %>">
+                            <i class="w-4 h-4" data-lucide="chevron-left"></i>
+                        </a>
+                    </li>
+                <% } %>
+
+                <% for (let index=pagination.currentPage - 2; index < pagination.currentPage ; index++) { if(pagination.currentPage==1) break; if (index==0) continue; %>
+                    <li class="page-item">
+                        <a class="page-link" href="?<%= urlHelper.mergeQuery(queryString, {page: 1}) %>">
+                            <%= index %>
+                        </a>
+                    </li>
+                <% } %>
+
+                <% for (let index=pagination.currentPage; index <=pagination.currentPage + 2 ; index++) { %>
+                    <li class="page-item <%= index === pagination.currentPage ? 'active' : '' %>">
+                        <a class="page-link"
+                            href="?<%= urlHelper.mergeQuery(queryString, {page: index}) %>">
+                            <%= index %>
+                        </a>
+                    </li>
+                    <% if(index==pagination.pages) break; } if(pagination.currentPage !=pagination.pages) { %>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?<%= urlHelper.mergeQuery(queryString, {page: (pagination.pages > 2 ? pagination.currentPage + 1 : 2)}) %>">
+                            <i class="w-4 h-4" data-lucide="chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?<%= urlHelper.mergeQuery(queryString, {page: pagination.pages}) %>">
+                            <i class="w-4 h-4" data-lucide="chevrons-right"></i>
+                        </a>
+                    </li>
+                <% } %>
+            </ul>
+        <% } %>
+    </nav>
+
+    <div class="box py-2 px-2">Tất cả: <%=pagination.totalItems %>
+    </div>
+</div>
+<!-- END: Pagination -->

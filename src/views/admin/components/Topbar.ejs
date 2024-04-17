@@ -3,7 +3,11 @@
     <!-- BEGIN: Breadcrumb -->
     <nav aria-label="breadcrumb" class="-intro-x mr-auto hidden sm:flex">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item active" aria-current="page"><%= page.shortTitle ?? 'No title'%></li>
+            <% breadcrumbs.forEach(function(crumb, index) { %> <% if (index === breadcrumbs.length - 1) { %>
+            <li class="breadcrumb-item active"><%= crumb.label %></li>
+            <% } else { %>
+            <li class="breadcrumb-item"><a href="<%= crumb.url %>"><%= crumb.label %></a></li>
+            <% } %> <% }); %>
         </ol>
     </nav>
     <!-- END: Breadcrumb -->
@@ -123,34 +127,30 @@
             aria-expanded="false"
             data-tw-toggle="dropdown"
         >
-            <img alt="Midone - HTML Admin Template" src="" />
+            <img alt="Midone - HTML Admin Template" src="<%= user.avatar %>" />
         </div>
         <div class="dropdown-menu w-56">
             <ul class="dropdown-content bg-primary text-white">
                 <li class="p-2">
                     <div class="font-medium"><%= user.displayName %></div>
-                    <div class="text-xs text-white/70 mt-0.5 dark:text-slate-500"><%= user.username %></div>
+                    <div class="text-xs text-white/70 mt-0.5 dark:text-slate-500"><%= roles[user.roleCode] %></div>
                 </li>
                 <li>
                     <hr class="dropdown-divider border-white/[0.08]" />
                 </li>
                 <li>
-                    <a href="" class="dropdown-item hover:bg-white/5">
+                    <a href="/admin/user/edit/<%= user._id %>" class="dropdown-item hover:bg-white/5">
                         <i data-lucide="user" class="w-4 h-4 mr-2"></i> Profile
                     </a>
                 </li>
                 <li>
-                    <a href="" class="dropdown-item hover:bg-white/5">
+                    <a href="/admin/user/add" class="dropdown-item hover:bg-white/5">
                         <i data-lucide="edit" class="w-4 h-4 mr-2"></i> Add Account
                     </a>
                 </li>
+            
                 <li>
-                    <a href="" class="dropdown-item hover:bg-white/5">
-                        <i data-lucide="lock" class="w-4 h-4 mr-2"></i> Reset Password
-                    </a>
-                </li>
-                <li>
-                    <a href="" class="dropdown-item hover:bg-white/5">
+                    <a href="https://fb.com/tailatingl" class="dropdown-item hover:bg-white/5">
                         <i data-lucide="help-circle" class="w-4 h-4 mr-2"></i> Help
                     </a>
                 </li>
@@ -167,44 +167,5 @@
     </div>
     <!-- END: Account Menu -->
 </div>
-<!-- END: Top Bar -->
 
-<% if(typeof message !== "undefined") {%>
-<div class="mb-6 intro-y">
-    <div class="alert alert-dismissible show box bg-primary text-white flex items-center mb-6" role="alert">
-        <span>
-            <%= message %>
-            <!-- <a
-                    href="https://themeforest.net/item/midone-jquery-tailwindcss-html-admin-template/26366820"
-                    class="underline ml-1"
-                    target="blank"
-                    >themeforest.net</a
-                >.
-                <button
-                    class="rounded-md bg-white bg-opacity-20 dark:bg-darkmode-300 hover:bg-opacity-30 py-0.5 px-2 -my-3 ml-2"
-                >
-                    Live Preview
-                </button> -->
-        </span>
-        <button type="button" class="btn-close text-white" data-tw-dismiss="alert" aria-label="Close">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                data-lucide="x"
-                icon-name="x"
-                class="lucide lucide-x w-4 h-4"
-            >
-                <path d="M18 6 6 18"></path>
-                <path d="m6 6 12 12"></path>
-            </svg>
-        </button>
-    </div>
-</div>
-<% } %>
+<!-- END: Top Bar -->

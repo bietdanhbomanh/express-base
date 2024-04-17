@@ -8,63 +8,91 @@ const userSchema = new mongoose.Schema(
         username: {
             type: String,
             required: true,
-            minlength: 5,
-            maxlength: 32,
-            trim: true,
             unique: true,
+            trim: true,
+            lowercase: true,
+            minlength: 6,
+            maxlength: 20,
+            validate: {
+                validator: function (value) {
+                    const regex = /^[a-zA-Z0-9-_]+$/; // Chỉ chấp nhận ký tự chữ, số và dấu gạch dưới
+                    return regex.test(value);
+                },
+                message: 'invalid username',
+            },
         },
 
         displayName: {
             type: String,
             required: true,
-            minlength: 5,
+            minlength: 6,
+            maxlength: 32,
             trim: true,
+        },
+
+        description: {
+            type: String,
+            default: '',
         },
 
         email: {
             type: String,
             required: true,
-            unique: true,
             trim: true,
             lowercase: true,
             validate: {
                 validator: function (value) {
                     return validator.isEmail(value);
                 },
-                message: 'email',
-            },
-        },
-        password: {
-            type: String,
-            required: true,
-            trim: true,
-            validate: {
-                validator: function (value) {
-                    return validator.isStrongPassword(value);
-                },
+                message: 'invalid email',
             },
         },
 
+        gender: {
+            type: String,
+            enum: ['male', 'female', 'other'],
+        },
+        dateOfBirth: {
+            type: Date,
+        },
+
+        status: {
+            type: String,
+            enum: ['on', 'off'],
+            default: 'off',
+        },
+
+        password: {
+            type: String,
+        },
+        avatar: {
+            type: String,
+        },
+        phoneNumber: {
+            type: String,
+            trim: true,
+        },
         roleCode: {
             type: Number,
-            default: 1,
-            required: true,
+            default: 4,
         },
         type: {
             type: String,
+            enum: ['user', 'cms'],
             default: 'cms',
-            required: true,
         },
     },
     { timestamps: true }
 );
 
+userSchema.index({ username: 'text', displayName: 'text' });
+
 userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
 
+const saltRounds = 10;
 userSchema.pre('save', async function (next) {
-    const saltRounds = 10;
     try {
         this.password = await bcrypt.hash(this.password, saltRounds);
     } catch (err) {
@@ -74,40 +102,21 @@ userSchema.pre('save', async function (next) {
 
 const userModel = mongoose.model('User', userSchema);
 
-async function createOrUpdateUser(data) {
-    const user = await userModel.findOne({ username: data.username });
-
-    if (user) {
-        const isPasswordValid = await user.comparePassword(data.password);
-
-        if (isPasswordValid) {
-            console.log('Đã có user admin');
-        } else {
-            Object.assign(user, data);
-            try {
-                await user.save();
-                console.log('Cập nhật user admin');
-            } catch (e) {
-                console.log('Error save');
-            }
-        }
-    } else {
-        try {
-            await userModel.create(data);
-            console.log('Tạo user admin');
-        } catch (error) {
-            console.log(error.errors);
-        }
-    }
-}
-
-// init create user
-createOrUpdateUser({
-    username: 'admin',
+const defaultUser = new userModel({
+    username: 'phamtai',
     password: '@Tytyty123',
     email: 'admin@admin.com',
     displayName: 'Administrator',
     roleCode: 0,
+    status: 'on',
 });
+defaultUser
+    .save()
+    .then((e) => {
+        console.log('Tạo user default');
+    })
+    .catch((e) => {
+        console.error('User default có sẵn hoặc lỗi');
+    });
 
 module.exports = userModel;

@@ -16,27 +16,41 @@ module.exports = {
         }
     },
     loginAjax: async function (req, res) {
-        const user = await userModel.findOne({ username: req.body.username });
-        if (user) {
-            // Xác thực password
-            if (await user.comparePassword(req.body.password)) {
-                req.session.userId = user._id.toString();
-
-                if (req.body.remember) {
-                    // Trường hợp chọn remember, lưu jwt biến token vào cookie
-                    const token = jwt.sign({ userId: req.session.userId, ip: req.ip }, process.env.KEY);
-                    res.cookie('token', token, { httpOnly: true, expires: new Date(Date.now() + 24 * 2 * 3600000) });
+        try {
+            const user = await userModel.findOne({ username: req.body.username });
+            if (user) {
+                if(user.status === 'off') {
+                    throw {form: { username: 'Tài khoản vô hiệu' }}
                 }
-                res.json({ status: 1, redirect: req.session.redirect, message: 'Chờ chuyển hướng', delay: 3000 });
+                // Xác thực password
+                if (await user.comparePassword(req.body.password)) {
+                    req.session.userId = user._id.toString();
+                    if (req.body.remember) {
+                        // Trường hợp chọn remember, lưu jwt biến token vào cookie
+                        const token = jwt.sign({ userId: req.session.userId, ip: req.ip }, process.env.KEY);
+                        res.cookie('token', token, {
+                            httpOnly: true,
+                            expires: new Date(Date.now() + 24 * process.env.COOKIEEXPIRES * 3600000),
+                        });
+                    }
+                    res.json({
+                        status: 1,
+                        redirect: req.query.redirect || '/admin/dashboard',
+                        message: 'Đăng nhập thành công vui lòng chờ',
+                        delay: 2000,
+                    });
+                } else {
+                    throw {form: { password: 'Mật khẩu không chính xác' }}
+                }
             } else {
-                res.json({
-                    status: 0,
-                    message: 'Lỗi xác thực',
-                    form: { password: 'Mật khẩu không chính xác' },
-                });
+                throw {form: {username: 'Tài khoản không tồn tại'}}
             }
-        } else {
-            res.json({ status: 0, message: 'Lỗi xác thực', form: { username: 'Tài khoản không tồn tại' } });
+        } catch (err) {
+            res.json({
+                status: 0,
+                message: 'Lỗi xác thực',
+                form: err.form,
+            });
         }
     },
 

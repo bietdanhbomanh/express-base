@@ -9,6 +9,28 @@ module.exports = [
     },
 
     {
+        icon: 'user',
+        name: 'User',
+        javascript: 'javascript:;',
+        url: '/admin/user',
+
+        children: [
+            {
+                icon: 'plus',
+                name: 'Add new',
+                url: '/admin/user/add',
+                children: [],
+            },
+            {
+                icon: 'default',
+                name: 'List',
+                url: '/admin/user/list',
+                children: [],
+            },
+        ],
+    },
+
+    {
         icon: 'box',
         name: 'Menu',
         url: '/admin/menus',
@@ -61,6 +83,29 @@ module.exports = [
                 icon: 'default',
                 name: 'List',
                 url: '/admin/post/list',
+                children: [],
+            },
+        ],
+    },
+
+    {
+        icon: 'code',
+        name: 'Tag',
+        url: '/admin/categories',
+        javascript: 'javascript:;',
+        url: '/admin/tag',
+
+        children: [
+            {
+                icon: 'plus',
+                name: 'Add new',
+                url: '/admin/tag/add',
+                children: [],
+            },
+            {
+                icon: 'default',
+                name: 'List',
+                url: '/admin/tag/list',
                 children: [],
             },
         ],

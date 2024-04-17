@@ -6,7 +6,6 @@ const categorySchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true,
-            index: true,
         },
 
         metaTitle: {
@@ -24,8 +23,8 @@ const categorySchema = new mongoose.Schema(
             type: String,
         },
 
-        tags: {
-            type: [String],
+        thumbnail: {
+            type: String,
         },
 
         type: {
@@ -35,9 +34,9 @@ const categorySchema = new mongoose.Schema(
             lowercase: true,
             default: 'category',
         },
-        published: {
+        status: {
             type: String,
-            required: true,
+            enum: ['on', 'off'],
             default: 'off',
         },
 
@@ -45,27 +44,24 @@ const categorySchema = new mongoose.Schema(
             type: String,
             required: true,
             lowercase: true,
+            unique: true,
             index: true,
         },
 
-        position: {
+        order: {
             type: Number,
             default: 0,
         },
         parent: {
             type: mongoose.Schema.ObjectId,
             ref: 'Category',
-        },
-
-        published: {
-            type: String,
-            default: 'off',
+            default: null,
         },
     },
     { timestamps: true }
 );
 
-categorySchema.index({ title: 'text', content: 'text', tags: 'text', description: 'text' });
+categorySchema.index({ title: 'text', content: 'text', description: 'text' });
 
 const categoryModel = mongoose.model('Category', categorySchema);
 
@@ -74,13 +70,13 @@ const data = {
     title: 'Uncategorized',
     description: 'Default category',
     parent: null,
-    published: 'on',
+    status: 'on',
 };
 
 categoryModel
-    .findOneAndUpdate({ description: 'Default category' }, data, { upsert: true })
+    .findOneAndUpdate({ slug: 'uncategorized' }, data, { upsert: true })
     .then(() => {
-        console.log('Category mặc định');
+        console.log('Tạo categroy mặc định');
     })
     .catch((error) => {
         console.error('Lỗi category mặc định:', error);

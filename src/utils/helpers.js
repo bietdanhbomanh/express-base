@@ -1,10 +1,11 @@
 module.exports = function loadHelpers(req, res, next) {
-    res.locals.helpers = helpers;
+    res.locals.renderHelper = renderHelper;
     res.locals.urlHelper = urlHelper;
+    res.locals.stringHelper = stringHelper;
     next();
 };
-const helpers = {
-    generateMenu: function (menu, isOpen = false, isFirst = true) {
+const renderHelper = {
+    menuAdmin: function (menu, isOpen = false, isFirst = true) {
         let menuHTML = '<ul class="' + (isOpen ? 'side-menu__sub-open' : '') + '">';
 
         menu.forEach((item) => {
@@ -32,7 +33,7 @@ const helpers = {
                 menuHTML += '</a>';
 
                 if (item.children.length) {
-                    menuHTML += this.generateMenu(item.children, item.active, false);
+                    menuHTML += this.menuAdmin(item.children, item.active, false);
                 }
 
                 menuHTML += '</li>';
@@ -48,7 +49,7 @@ const helpers = {
         return menuHTML;
     },
 
-    generateMenuMobile: function (menu, isOpen = false, isFirst = true) {
+    menuMobileAdmin: function (menu, isOpen = false, isFirst = true) {
         let menuHTML = `<ul class="${isOpen ? 'menu__sub-open' : ''} ${isFirst ? 'scrollable__content py-2' : ''}">`;
 
         menu.forEach((item) => {
@@ -71,7 +72,7 @@ const helpers = {
                     </a>`;
 
                 if (item.children.length) {
-                    menuHTML += this.generateMenuMobile(item.children, item.active, false);
+                    menuHTML += this.menuMobileAdmin(item.children, item.active, false);
                 }
 
                 menuHTML += `</li>`;
@@ -85,6 +86,41 @@ const helpers = {
         menuHTML += `</ul>`;
 
         return menuHTML;
+    },
+
+};
+
+
+const stringHelper = {
+
+    handleFileName: (filename) => {
+        const [name, ext] = filename.split(/\.(?=[^.]+$)/);
+        return urlHelper.toSlug(name) + '.' + ext;
+    },
+    handleDirName: (dir) => {
+        return urlHelper.toSlug(dir);
+    },
+};
+
+const urlHelper = {
+    mergeQuery: function (queryString, obj) {
+        // Tách các cặp key-value từ chuỗi truy vấn
+        const queryParams = new URLSearchParams(queryString);
+        
+        // Lặp qua các cặp key-value trong object
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                // Nếu key đã tồn tại trong queryString, thay thế giá trị
+                if (queryParams.has(key)) {
+                    queryParams.set(key, obj[key]);
+                } else {
+                    // Nếu không, thêm key-value mới vào queryString
+                    queryParams.append(key, obj[key]);
+                }
+            }
+        }
+
+        return queryParams.toString();
     },
 
     toSlug: function (text) {
@@ -117,33 +153,5 @@ const helpers = {
         text = text.trim('-');
 
         return text;
-    },
-
-    handleFileName: (filename) => {
-        const [name, ext] = filename.split(/\.(?=[^.]+$)/);
-        return helpers.toSlug(name) + '.' + ext;
-    },
-};
-
-const urlHelper = {
-    concatQuery: function (queryString, obj) {
-        // Tách các cặp key-value từ chuỗi truy vấn
-        const queryParams = new URLSearchParams(queryString);
-
-        // Lặp qua các cặp key-value trong object
-        for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                // Nếu key đã tồn tại trong queryString, thay thế giá trị
-                if (queryParams.has(key)) {
-                    queryParams.set(key, obj[key]);
-                } else {
-                    // Nếu không, thêm key-value mới vào queryString
-                    queryParams.append(key, obj[key]);
-                }
-            }
-        }
-
-        // Trả về chuỗi truy vấn mới
-        return queryParams.toString();
     },
 };

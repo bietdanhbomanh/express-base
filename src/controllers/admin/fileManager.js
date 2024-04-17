@@ -41,12 +41,13 @@ module.exports = function (req, res) {
                         }
                     }
                 });
-                res.json({ status: 1 });
+                res.json({ status: 1, reload: true });
             }
             break;
 
         case 'PUT':
             if (req.body.action == 'mkdir') {
+                req.body.dirName = res.locals.stringHelper.handleDirName(req.body.dirName);
                 const targetPath = path.join(basePath, pathChild, `${req.body.dirName}`);
                 fs.mkdir(targetPath, (err) => {
                     if (err) {
@@ -63,7 +64,7 @@ module.exports = function (req, res) {
                     const result = [];
                     const files = req.files;
                     files.forEach((file) => {
-                        file.originalname = res.locals.helpers.handleFileName(file.originalname);
+                        file.originalname = res.locals.stringHelper.handleFileName(file.originalname);
                         let targetPath = path.join(basePath, pathChild, `${decodeURIComponent(file.originalname)}`);
 
                         // Kiểm tra nếu file đã tồn tại tại targetPath
@@ -92,7 +93,7 @@ module.exports = function (req, res) {
                         });
                         result.push(targetPath.replace(/\\/g, '/').replace(/^public/, ''));
                     });
-                    res.json({ status: 1, delay: 2000, data: result });
+                    res.json({ status: 1,reload: true ,delay: 2000, data: result });
                 });
             }
             break;
@@ -112,14 +113,12 @@ module.exports = function (req, res) {
                     return getErrorPage(req, res);
                 }
 
-                files = files
-                    .filter((file) => file.isFile())
-                    .sort((a, b) => {
-                        return (
-                            fs.statSync(basePath + pathChild + '/' + b.name).mtime.getTime() -
-                            fs.statSync(basePath + pathChild + '/' + a.name).mtime.getTime()
-                        );
-                    });
+                files = files.sort((a, b) => {
+                    return (
+                        fs.statSync(basePath + pathChild + '/' + b.name).mtime.getTime() -
+                        fs.statSync(basePath + pathChild + '/' + a.name).mtime.getTime()
+                    );
+                });
 
                 const fileItems = [];
                 const dirItems = [];
@@ -197,7 +196,7 @@ module.exports = function (req, res) {
                     title: 'File Manager CMS ' + process.env.WEB,
                 };
 
-                const main = req.query.CKEditorFuncNum || req.query.select ? 'pages/fileSelect' : 'pages/fileManager';
+                const main = req.query.CKEditorFuncNum || req.query.select ? 'fileManager/fileSelect' : 'fileManager/fileManager';
 
                 res.render('admin/layout', { main });
             });

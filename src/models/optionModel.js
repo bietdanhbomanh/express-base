@@ -8,19 +8,11 @@ const optionSchema = new mongoose.Schema({
         unique: true,
     },
 
-    json: {
+    data: {
         type: Object,
     },
 });
 
 const OptionModel = mongoose.model('Option', optionSchema);
-
-OptionModel.create({ field: 'settings 1', json: { website: 'Tailatin' } })
-    .then()
-    .catch((err) => {});
-
-OptionModel.updateOne({ field: 'settings 1' }, { json: { website: 'Tailatin2ff' } }, { versionKey: true })
-    .then()
-    .catch((err) => {});
 
 module.exports = OptionModel;
